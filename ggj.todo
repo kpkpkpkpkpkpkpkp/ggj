@@ -1,0 +1,26 @@
+
+COLORS
+    ✔ -allow each button to create different colored line @started(21-01-29 14:20) @done(21-01-29 15:03) @lasted(43m55s)
+    ☐ -all lines on the screen will be checked for intersection.
+        ☐ if two lines cross, the section of the vectors under the mouse that are enclosed by other vectors changes color to something (combine the intersecting colors?)
+
+TILES
+    ☐ -split the item spritesheet into individual quads
+    ☐ -create objects for each item
+    ☐ -randomize how they're placed?
+    ☐ -associate text with them?
+
+VICTORY CHECKS
+    For each stage, there is one or more items that need to be "found".
+    ☐ -Check whether an item is encolsed by lines
+    ☐ -check the colors of the enclosing lines
+    ☐ -if all the lines are the same color, the encolsed items become "found"
+    ☐ -If the enclosed area of items includes only target items, you have found it! you win the level!
+    ☐ -if an area of items isn't ONLY the target items, a random non-essential item dissapears, narrowing down the one you need to find.
+
+    IDEA: are there be some items that aren't the win condition target but that give you some benefit? Like a journal entry?
+
+STORY
+    ☐ -need a way to show text for story and hints. 
+        (will this be a different screen? A box that overlays? A journal menu?)
+
