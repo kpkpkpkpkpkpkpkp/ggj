@@ -1,26 +1,44 @@
 
 COLORS
     ✔ -allow each button to create different colored line @started(21-01-29 14:20) @done(21-01-29 15:03) @lasted(43m55s)
-    ☐ -all lines on the screen will be checked for intersection.
-        ☐ if two lines cross, the section of the vectors under the mouse that are enclosed by other vectors changes color to something (combine the intersecting colors?)
-
-TILES
+    ✔ Lines change colors as they cross the screen @done(21-01-30 11:06)
+    ☐ Lines start with a "center constant" that determines where the value 255/255/255 happens on the screen
+    
+    TILES
     ☐ -split the item spritesheet into individual quads
     ☐ -create objects for each item
     ☐ -randomize how they're placed?
     ☐ -associate text with them?
-
-VICTORY CHECKS
+    
+    STATE CHECKS
     For each stage, there is one or more items that need to be "found".
-    ☐ -Check whether an item is encolsed by lines
+    ☐ -Once ALL lines are placed, they are all checked for intersection. (only avects needs to be checked)
+            There are some exception cases; if there are only one or two lines left, instead of taking intersection, 
+            we will consider the whole screen enclosed by lines, and the edges of the screen can form shapes.
+    ☐ -Check each shape
     ☐ -check the colors of the enclosing lines
     ☐ -if all the lines are the same color, the encolsed items become "found"
-    ☐ -If the enclosed area of items includes only target items, you have found it! you win the level!
-    ☐ -if an area of items isn't ONLY the target items, a random non-essential item dissapears, narrowing down the one you need to find.
+    ☐ -If the enclosed area of items includes target items, highlight the shape.
+        ☐ If ANY shape meets this criteria, it will be highlighted. If NONE meet the criteria, something flashes red? and the lines vanish (or fade)
 
-    IDEA: are there be some items that aren't the win condition target but that give you some benefit? Like a journal entry?
+    ☐ once there is an area of "found" items, the player is able to click on them.
+        ☐ If the player clicks on the right item, they get a new journal page and the lines vanish. New BG and new color constants are applied to the buttons. Sound is turned off.
+        ☐ Button either falls off or is found again after only one button remains.
+        ☐ If the player clicks a wrong item, a random non-essential items falls away, permanently.
+SOUND
+    ✔ Apply sounds as the player clicks buttons. The sounds happen in a perscribed order regardless of which buttton is clicked. @done(21-01-30 12:28)
 
 STORY
     ☐ -need a way to show text for story and hints. 
         (will this be a different screen? A box that overlays? A journal menu?)
 
+
+STUFF TO MAKE
+    ☐ pressed buttons
+    ☐ sparkle
+    ☐ text box
+
+
+once ALL lines have been placed, check for shapes
+if ANY shape contains the target item, highlight the area
+You can now click on the items in that area.

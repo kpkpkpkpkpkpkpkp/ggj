@@ -2,7 +2,7 @@ local vector = require 'lib.vector'
 require 'lib.sets'
 HC = require 'lib.HC'
 Polygon = require 'lib.HC.polygon'
-
+require 'src.sounds'
 game = {}
 cpoints = {}
 apoints = {}
@@ -10,6 +10,8 @@ ashapes = {}
 
 -- Current vectors tracked by the mouse. Current color of vectors is also included
 cvects = {color = {r = 255, g = 255, b = 255}}
+res = {x = 248, y = 248}
+bgwidth = 720
 -- All vectors placed on the screen
 avects = {}
 
@@ -20,27 +22,28 @@ holding = false
 lastbutton = nil
 
 function game.load()
+    love.audio.setVolume(0)
+    sounds.load()
     collider = HC.new()
-    bgcanvas = love.graphics.newCanvas(720, 208)
-    border = love.graphics.newImage('assets/edge.png')
-    screen = love.graphics.newImage('assets/Screen.png')
-    items = love.graphics.newImage('assets/ItemsCropped.png')
-    cross = love.image.newImageData('assets/testing/crosshairs.png')
+    bgcanvas = love.graphics.newCanvas(bgwidth, res.x)
+    border = love.graphics.newImage('assets/Screen.png')
+    screen = love.graphics.newImage('assets/ScreenBackground.png')
+    items = love.graphics.newImage('assets/Items2.png')
     shine = love.graphics.newImage('assets/testing/shine.png')
-    cur = love.mouse.newCursor(cross, 32, 32)
+    cur = love.mouse.getSystemCursor("hand")
     love.mouse.setCursor(cur)
 
     table.insert(apoints, {p1 = 0, p2 = 0})
-    table.insert(apoints, {p1 = 232, p2 = 208})
-    table.insert(apoints, {p1 = 232, p2 = 0})
-    table.insert(apoints, {p1 = 0, p2 = 208})
+    table.insert(apoints, {p1 = res.x, p2 = res.y})
+    table.insert(apoints, {p1 = res.x, p2 = 0})
+    table.insert(apoints, {p1 = 0, p2 = res.y})
 
-    shape = Polygon(0, 0, 232, 0, 232, 208, 0, 208)
-    shape.colo ={
+    shape = Polygon(0, 0, res.x, 0, res.x, res.y, 0, res.y)
+    shape.colo = {
         math.random(200, 255) / 255, math.random(200, 255) / 255,
-        math.random(200, 255) / 255,0.6
+        math.random(200, 255) / 255, 0.6
     }
-    table.insert(ashapes, shape )
+    table.insert(ashapes, shape)
 
 end
 
@@ -65,6 +68,25 @@ function game.update(dt)
     ww = love.graphics.getWidth()
     wh = love.graphics.getHeight()
 
+
+    -- for i, shape in pairs(ashapes) do
+    --     x, y, dx, dy = -1, 100, 100, 100
+    --     intersects, ray_parameter = shape:intersectsRay(x, y, dx, dy)
+    --     -- print(sets.tostring(v))
+    --     -- print(v:unpack())
+    --     -- print(shape:unpack())
+
+    --     -- print(intersects)
+    --     -- print(ray_parameter)
+    --     -- ix,iy=(x,y) + ray_parameter * (dx, dy)
+    --     -- ix = x + ray_parameter * dx
+    --     -- iy = y + ray_parameter * dy
+    --     -- print(ix,iy)
+    --     table.insert(apoints, {p1 = ix, p2 = iy})
+    -- end
+
+
+    --this is for things relating to the currently held vectors
     if cvects then cpoints = {mouse = cpoints.mouse} end
     for i, v in pairs(cvects) do
         if i ~= 'color' then
@@ -72,29 +94,14 @@ function game.update(dt)
             vx, vy = v:unpack()
             -- love.graphics.line(mx, my, vx + mx, vy + my)
             table.insert(cpoints, {p1 = vx + mx, p2 = vy + my})
-
-
-            for i,shape in pairs(ashapes) do
-                x,y,dx,dy=-1, 100, 100, 100
-                intersects,ray_parameter = shape:intersectsRay(x,y,dx,dy)
-                -- print(sets.tostring(v))
-                -- print(v:unpack())
-                print(shape:unpack())
-                
-                print(intersects)
-                print(ray_parameter)
-                -- ix,iy=(x,y) + ray_parameter * (dx, dy)
-                ix=x+ray_parameter*dx
-                iy=y+ray_parameter*dy
-                print(ix,iy)
-                table.insert(apoints,{p1=ix,p2=iy})
-            end
+        else
+            --this is what makes the color of the vectors change with the mouse movment
+            v.r = (mx / 255)
+            v.g = (my / 255)
+            v.b = 255 -- (my-mx/255)
         end
-        table.insert(apoints,{p1=100,p2=100})
-        print(sets.tostring(apoints))
+        -- print(sets.tostring(apoints))
     end
-
-
 
     -- 
     -- for i=1,#apoints,1 do
@@ -169,15 +176,22 @@ function game.draw()
         love.graphics.polygon('line', shape:unpack())
     end
     love.graphics.setColor(255, 255, 255)
-
-    for i, p in pairs(cpoints) do love.graphics.circle('fill', p.p1, p.p2, 2) end
-    for i, p in pairs(apoints) do love.graphics.circle('fill', p.p1, p.p2, 2) end
+    if DEBUG then
+        for i, p in pairs(cpoints) do
+            love.graphics.circle('fill', p.p1, p.p2, 2)
+        end
+        for i, p in pairs(apoints) do
+            love.graphics.circle('fill', p.p1, p.p2, 2)
+        end
+    end
 end
 
 function love.keypressed(key, isrepeat)
     if key == 'escape' then
         avects = {}
         apoints = {}
+        for i, button in pairs(buttons) do button.down = false end
+        sounds.playnone()
     end
 end
 
@@ -195,24 +209,33 @@ function love.mousepressed(argx, argy, button, istouch, presses)
                 locked = false
                 button.pressed = not button.pressed
             else
-                if not locked then
+                if not locked and not button.down then
                     lastbutton = button
                     -- generate new vectors tied to the cursor for this button
-                    mag = 50
+                    mag = 400
                     for i, v in pairs(button.vectors) do
                         cvects.color = button.color
                         table.insert(cvects, mag * v)
                     end
+                    love.mouse.setVisible(false)
+                    sounds.playmore()
                     locked = true
+                    button.pressed = not button.pressed
                 end
-                button.pressed = not button.pressed
             end
         end
     end
 
     -- if we are inside the viewing area, place the current vectors on the screen
     if not wasbutton and locked then
-        table.insert(avects, {x = argx, y = argy, vs = cvects})
+        lastbutton.down = true
+        table.insert(avects, {
+            x = argx,
+            y = argy,
+            -- this needs to be deep copy
+            vs = cvects
+        })
+
         table.insert(apoints, {p1 = argx, p2 = argy})
 
         for i, v in pairs(cvects) do
@@ -221,7 +244,9 @@ function love.mousepressed(argx, argy, button, istouch, presses)
             end
         end
         cpoints = {}
-        cvects = {color = cvects.color}
+        cvects = {}
+        love.mouse.setVisible(true)
+        -- cvects = {color = cvects.color}
         locked = false
     end
 end
@@ -244,3 +269,4 @@ function love.mousereleased(argx, argy, button, istouch, presses)
 end
 
 function love.wheelmoved(x, y) end
+

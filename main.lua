@@ -1,7 +1,12 @@
+if os.getenv("LOCAL_LUA_DEBUGGER_VSCODE") == "1" then
+    require("lldebugger").start()
+end
+
 require 'src.game'
-scale={x=4,y=4}
+scale={x=2.5,y=2.5}
 local __newImage = love.graphics.newImage -- old function
 local __getPosition = love.mouse.getPosition -- old function
+-- DEBUG = false
 DEBUG = true
 
 function love.mouse.getPosition() -- new function that sets nearest filter
@@ -19,8 +24,8 @@ end
 
 function love.load()
     debuglines = {}
-    love.window.setMode(232*scale.x, 208*scale.y)
-    canvas = love.graphics.newCanvas(232, 208)
+    love.window.setMode(res.x*scale.x, res.y*scale.y)
+    canvas = love.graphics.newCanvas(res.x, res.y)
     canvas:setFilter("nearest", "nearest")
     game.load()
 end
