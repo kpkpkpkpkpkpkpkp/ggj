@@ -29,7 +29,7 @@ function game.load()
     border = love.graphics.newImage('assets/Screen.png')
     screen = love.graphics.newImage('assets/ScreenBackground.png')
     items = love.graphics.newImage('assets/Items2.png')
-    shine = love.graphics.newImage('assets/testing/shine.png')
+    shine = love.graphics.newImage('assets/shine.png')
     cur = love.mouse.getSystemCursor("hand")
     love.mouse.setCursor(cur)
 
