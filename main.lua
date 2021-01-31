@@ -1,13 +1,13 @@
 if os.getenv("LOCAL_LUA_DEBUGGER_VSCODE") == "1" then
     require("lldebugger").start()
 end
-
+love.graphics.setDefaultFilter("nearest", "nearest" )
 require 'src.game'
 scale={x=2.5,y=2.5}
 local __newImage = love.graphics.newImage -- old function
 local __getPosition = love.mouse.getPosition -- old function
-DEBUG = false
--- DEBUG = true
+-- DEBUG = false
+DEBUG = true
 
 function love.mouse.getPosition() -- new function that sets nearest filter
     local x,y = __getPosition() -- call old function with all arguments to this function

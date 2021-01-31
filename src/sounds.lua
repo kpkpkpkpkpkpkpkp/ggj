@@ -3,21 +3,28 @@ function sounds.load()
     playing = 0
     layers = {
         love.audio.newSource(
-            'assets/sounds/Mysterious BGM Edit 1 Export 1 Mids 1 Render 1.ogg',
-            'stream'), love.audio.newSource(
-            'assets/sounds/Mysterious BGM Edit 1 Export 1 Mids 2 Render 1.ogg',
-            'stream'), love.audio.newSource(
-            'assets/sounds/Mysterious BGM Edit 1 Export 1 Mids 3 Render 1.ogg',
-            'stream'), love.audio.newSource(
-            'assets/sounds/Mysterious BGM Edit 1 Export 1 Melody Render 1.ogg',
-            'stream'), love.audio.newSource(
-            'assets/sounds/Mysterious BGM Edit 1 Export 1 Melody Render 1.ogg',
-            'stream'), love.audio.newSource(
-            'assets/sounds/Mysterious BGM Edit 1 Export 1 Melody Render 1.ogg',
-            'stream'), love.audio.newSource(
-            'assets/sounds/Mysterious BGM Edit 1 Export 1 Melody Render 1.ogg',
-            'stream'), love.audio.newSource(
-            'assets/sounds/Mysterious BGM Edit 1 Export 1 Melody Render 1.ogg',
+            'assets/sounds/bgm1.ogg',
+            'stream'),
+        love.audio.newSource(
+            'assets/sounds/bgm2.ogg',
+            'stream'),
+        love.audio.newSource(
+            'assets/sounds/bgm3.ogg',
+            'stream'),
+        love.audio.newSource(
+            'assets/sounds/bgm4.ogg',
+            'stream'),
+        love.audio.newSource(
+            'assets/sounds/bgm5.ogg',
+            'stream'),
+        love.audio.newSource(
+            'assets/sounds/bgm6.ogg',
+            'stream'),
+        love.audio.newSource(
+            'assets/sounds/bgm7.ogg',
+            'stream'),
+        love.audio.newSource(
+            'assets/sounds/bgm8.ogg',
             'stream')
     }
     for i, sound in ipairs(layers) do

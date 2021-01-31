@@ -3,172 +3,140 @@ require 'lib.sets'
 HC = require 'lib.HC'
 Polygon = require 'lib.HC.polygon'
 require 'src.sounds'
+require 'src.items'
+require 'src.split_poly'
 game = {}
-cpoints = {}
 apoints = {}
+bg = {x = 0, y = 0}
+scrollspeed = 1
+
+x, y, dx, dy = 0, 0, 300, 140
+--color centers (track where the mouse was when the line was palced)
+cpoints = {}
+
 ashapes = {}
 
 -- Current vectors tracked by the mouse. Current color of vectors is also included
-cvects = {color = {r = 255, g = 255, b = 255}}
+cvects = {color = {r = 255 / 255, g = 255 / 255, b = 255 / 255},
+    colorcenter = {x = 0, y = 0}}
 res = {x = 248, y = 248}
 bgwidth = 720
 -- All vectors placed on the screen
 avects = {}
-
+mode = {play = true, display = true}
 -- Coords + image
 buttons = require 'src.buttons'
 lock = false
 holding = false
 lastbutton = nil
-
 function game.load()
-    love.audio.setVolume(0)
+    -- love.audio.setVolume(0)
+    font = love.graphics.newFont('assets/fonts/VT323-Regular.ttf', 80)
+    font:setFilter('nearest', 'nearest')
     sounds.load()
+    items.load()
     collider = HC.new()
     bgcanvas = love.graphics.newCanvas(bgwidth, res.x)
     border = love.graphics.newImage('assets/Screen.png')
+    display1 = love.graphics.newImage('assets/sprites/FullDisplayFile1.png')
+    display2 = love.graphics.newImage('assets/sprites/FullDisplayFile2.png')
+    display = display2
+    displayct = 0
     screen = love.graphics.newImage('assets/ScreenBackground.png')
-    items = love.graphics.newImage('assets/Items2.png')
-    shine = love.graphics.newImage('assets/shine.png')
     cur = love.mouse.getSystemCursor("hand")
     love.mouse.setCursor(cur)
-
-    table.insert(apoints, {p1 = 0, p2 = 0})
-    table.insert(apoints, {p1 = res.x, p2 = res.y})
-    table.insert(apoints, {p1 = res.x, p2 = 0})
-    table.insert(apoints, {p1 = 0, p2 = res.y})
-
-    shape = Polygon(0, 0, res.x, 0, res.x, res.y, 0, res.y)
+    
+    --this is the bounding polygon for area detection. Use it to re-init the ashapes table when it needs to be cleared.
+    shape = Polygon(20, 20, res.x - 20, 20, res.x - 20, res.y - 20, 20, res.y - 20)
+    --Color can be used for debug but it will start off clear
     shape.colo = {
-        math.random(200, 255) / 255, math.random(200, 255) / 255,
-        math.random(200, 255) / 255, 0.6
+        0 / 255,
+        255 / 255,
+        160 / 255,
+        0
     }
     table.insert(ashapes, shape)
 
 end
 
-bg = {x = 0, y = 0}
-scrollspeed = 1
+function game.addshapepoints(points, shape)
+    pts = {shape:unpack()}
+    for i = 1, #pts - 1, 2 do
+        table.insert(points, {p1 = pts[i], p2 = pts[i + 1]})
+    end
+end
+
+function game.addintersects(points, shape, x, y, dx, dy)
+    ray_parameters = shape:intersectionsWithRay(x, y, dx, dy)
+    v1 = vector(x, y)
+    v2 = vector(dx, dy)
+    for i, rp in pairs(ray_parameters) do
+        iv = v1 + (v2 * rp)
+        ix, iy = iv:unpack()
+        table.insert(points, {p1 = ix, p2 = iy})
+    end
+    return shape:intersectsRay(x, y, dx, dy)
+end
+
 function game.update(dt)
-    -- cpoints = {}
+    
     mx, my = love.mouse.getPosition()
-    cpoints['mouse'] = {p1 = mx, p2 = my}
     bg.x = bg.x - scrollspeed
     if bg.x < -screen:getWidth() then bg.x = 0 end
-
-    for i, button in pairs(buttons) do
-        if mx > button.x and mx < button.x + button.sprite:getWidth() and my >
-            button.y and my < button.y + button.sprite:getHeight() then
-            button.shine = true
+    
+    if mode.display then
+        dispaly = display2
+        if displayct > 2 then
+            displayct = 0
         else
-            button.shine = false
+            displayct = displayct + dt
         end
-    end
-
-    ww = love.graphics.getWidth()
-    wh = love.graphics.getHeight()
-
-
-    -- for i, shape in pairs(ashapes) do
-    --     x, y, dx, dy = -1, 100, 100, 100
-    --     intersects, ray_parameter = shape:intersectsRay(x, y, dx, dy)
-    --     -- print(sets.tostring(v))
-    --     -- print(v:unpack())
-    --     -- print(shape:unpack())
-
-    --     -- print(intersects)
-    --     -- print(ray_parameter)
-    --     -- ix,iy=(x,y) + ray_parameter * (dx, dy)
-    --     -- ix = x + ray_parameter * dx
-    --     -- iy = y + ray_parameter * dy
-    --     -- print(ix,iy)
-    --     table.insert(apoints, {p1 = ix, p2 = iy})
-    -- end
-
-
-    --this is for things relating to the currently held vectors
-    if cvects then cpoints = {mouse = cpoints.mouse} end
-    for i, v in pairs(cvects) do
-        if i ~= 'color' then
-            -- these vectors extend from the cursor. create a cursor vector and add the two to get final position.
-            vx, vy = v:unpack()
-            -- love.graphics.line(mx, my, vx + mx, vy + my)
-            table.insert(cpoints, {p1 = vx + mx, p2 = vy + my})
-        else
-            --this is what makes the color of the vectors change with the mouse movment
-            v.r = (mx / 255)
-            v.g = (my / 255)
-            v.b = 255 -- (my-mx/255)
+    else
+        if not locked then items.update(dt) end
+        
+        ww = love.graphics.getWidth()
+        wh = love.graphics.getHeight()
+        
+        
+        
+        rm = {}
+        
+        cpoints = {}
+        --FIND INTERSECTS
+        for i, shape in pairs(ashapes) do
+            for j, v in pairs(cvects) do
+                
+                if j ~= 'color' and j ~= 'colorcenter' then
+                    game.addintersects(cpoints, shape, mx, my, v.x, v.y)
+                end
+            end
         end
-        -- print(sets.tostring(apoints))
+        
+        --this is for things relating to the currently held vectors
+        --Changes color based on mouse position.
+        --TODO: Right now, any line will always create the same color when the mouse is in the same position on the screen.
+        --WANT to make an offset per-button per-level that 'shifts' the location of colors for that line.
+        --FOR EXAMPLE: White is always at the max width and height. We can change the position of white to a different location, which will shift where the line needs to be placed for the color to work.
+        v = cvects['color']
+        cc = cvects['colorcenter']
+        if v and cc then
+            cx, cy = cc.x, cc.y
+            v.r = (((mx + cx) % 255) / 255)
+            v.b = (((my + cy) % 255) / 255)
+            v.g = 0 / 255 -- (my-mx/255)
+        end
+    
+    --Once all lines are on the screen, they all need to be close to the same color or it won't work! (drop all the lines) (within some tolerance) That's all the color checking we need to do
+    --Then check any intersected areas. Any one of them that has the item we are currently looking for gets higlighted. If none have the item, bad sound plays and drop all the lines.
+    --If after this there is a highlighted area, the player can now click on the items in the area. Clicking on wrong ones causes something to fall off randomly.
     end
-
-    -- 
-    -- for i=1,#apoints,1 do
-
-    --     --apoints[i].p1,apoints[1].p2 
-    -- end
-
 end
 
 function game.draw()
-    -- love.graphics.setCanvas(bgcanvas)
     love.graphics.draw(screen, bg.x, bg.y)
     love.graphics.draw(screen, bg.x + screen:getWidth(), bg.y)
-    -- love.graphics.setCanvas(canvas)
-    -- love.graphics.draw(bgcanvas)
-    love.graphics.draw(items, 0, 0)
-
-    mx, my = love.mouse.getPosition()
-    ww = love.graphics.getWidth()
-    wh = love.graphics.getHeight()
-    love.graphics.setLineStyle('rough')
-    love.graphics.setLineWidth(4)
-    -- Draw lines for vects array
-    for i, vgrp in pairs(avects) do
-        -- vgrp corresponds to a previous cvects (avects is saved current vector tables that include a color)
-        -- love.graphics.setColor(coord.rgb.hr, coord.rgb.hg, coord.rgb.hb)
-
-        love.graphics.setColor(vgrp.vs['color'].r, vgrp.vs['color'].g,
-                               vgrp.vs['color'].b, vgrp.vs['color'].a)
-
-        for i, v in pairs(vgrp.vs) do
-            if i ~= 'color' then
-                love.graphics.line(vgrp.x, vgrp.y, v.x + vgrp.x, v.y + vgrp.y)
-            end
-        end
-    end
-    -- love.graphics.setColor(255, 255, 255)
-    if cvects.color then
-        love.graphics.setColor(cvects['color'].r, cvects['color'].g,
-                               cvects['color'].b, cvects['color'].a)
-    end
-    for i, v in pairs(cvects) do
-        if i ~= 'color' then
-            -- these vectors extend from the cursor. create a cursor vector and add the two to get final position.
-            vx, vy = v:unpack()
-            love.graphics.line(mx, my, vx + mx, vy + my)
-        end
-    end
-    love.graphics.setColor(255, 255, 255)
-
-    love.graphics.draw(border, 0, 0)
-
-    for i, button in pairs(buttons) do
-        if button.pressed then
-            love.graphics.draw(button.sprite,
-                               button.x + button.sprite:getWidth(),
-                               button.y + button.sprite:getHeight(), math.pi)
-        else
-
-            love.graphics.draw(button.sprite, button.x, button.y)
-        end
-
-        if button.shine then
-            love.graphics.draw(shine, button.x - 16, button.y - 16)
-        end
-    end
-
+    
+    items.draw()
     for i, shape in pairs(ashapes) do
         love.graphics.setColor(shape.colo)
         love.graphics.polygon('fill', shape:unpack())
@@ -176,23 +144,137 @@ function game.draw()
         love.graphics.polygon('line', shape:unpack())
     end
     love.graphics.setColor(255, 255, 255)
-    if DEBUG then
-        for i, p in pairs(cpoints) do
-            love.graphics.circle('fill', p.p1, p.p2, 2)
-        end
-        for i, p in pairs(apoints) do
-            love.graphics.circle('fill', p.p1, p.p2, 2)
+    
+    mx, my = love.mouse.getPosition()
+    ww = love.graphics.getWidth()
+    wh = love.graphics.getHeight()
+    love.graphics.setLineStyle('rough')
+    love.graphics.setLineWidth(3)
+    -- Draw lines for vects array
+    for i, vgrp in pairs(avects) do
+        -- vgrp corresponds to a previous cvects (avects is saved current vector tables that include a color)
+        love.graphics.setColor(vgrp.vs['color'].r, vgrp.vs['color'].g,
+            vgrp.vs['color'].b, vgrp.vs['color'].a)
+        
+        for i, v in pairs(vgrp.vs) do
+            if i ~= 'color' and i ~= 'colorcenter' then
+                love.graphics.line(vgrp.x, vgrp.y, v.x + vgrp.x, v.y + vgrp.y)
+            end
         end
     end
+    if cvects.color then
+        love.graphics.setColor(cvects['color'].r,
+            cvects['color'].g,
+            cvects['color'].b,
+            cvects['color'].a)
+    end
+    for i, v in pairs(cvects) do
+        if i ~= 'color' and i ~= 'colorcenter' then
+            -- these vectors extend from the cursor. create a cursor vector and add the two to get final position.
+            vx, vy = v:unpack()
+            love.graphics.line(mx, my, vx + mx, vy + my)
+        end
+    end
+    
+    love.graphics.setColor(255, 255, 255)
+    items.draw()
+    
+    love.graphics.draw(border, 0, 0)
+    items.drawfound()
+    
+    love.graphics.setNewFont(10)
+    for i, button in pairs(buttons) do
+        if not button.dropped then
+            if button.pressed then
+                love.graphics.draw(button.spritep,
+                    button.x,
+                    button.y)
+                love.graphics.setColor(0, 0, 255)
+                love.graphics.print(i,
+                    button.x,
+                    button.y)
+                love.graphics.setColor(255, 255, 255)
+            else
+                
+                love.graphics.draw(button.sprite, button.x, button.y)
+                love.graphics.setColor(0, 0, 255)
+                love.graphics.print(i,
+                    button.x,
+                    button.y)
+                love.graphics.setColor(255, 255, 255)
+            end
+        
+        end
+    end
+    
+    if mode.display then
+        deffont = love.graphics.getFont()
+        love.graphics.draw(display, 0, 0)
+        
+        love.graphics.setFont(font)
+        love.graphics.setColor(0, 0, 255, 255)
+        love.graphics.print(animation.currenttext.colo, 10, 10, 0, 0.2, 0.2)
+        if colorsset then
+            love.graphics.print(animation.currenttext.item, 10, 130, 0, 0.2, 0.2)
+        end
+        love.graphics.setFont(deffont)
+    
+    end
+    
+    love.graphics.setColor(255, 255, 255)
 end
 
 function love.keypressed(key, isrepeat)
     if key == 'escape' then
-        avects = {}
-        apoints = {}
-        for i, button in pairs(buttons) do button.down = false end
-        sounds.playnone()
+        game.reset()
     end
+end
+
+function game.reset()
+    
+    avects = {}
+    apoints = {}
+    cpoints = {}-- initial shape
+    cvects = {}-- initial shape
+    ashapes = {shape}-- initial shape
+    for i, t in pairs(animation.tiles) do
+        t.focus = false
+        t.selected = false
+    end
+    for i, button in pairs(buttons) do
+        button.down = false
+        button.pressed = false
+    end
+    sounds.playnone()
+    love.mouse.setVisible(true)
+    locked = false
+    colorset=false
+
+end
+
+function game.colorsmatch(colo1, colo2, tolerance)
+    if DEBUG then return true end
+    r1 = colo1.r * 255
+    g1 = colo1.g * 255
+    b1 = colo1.b * 255
+    
+    r2 = colo2.r * 255
+    g2 = colo2.g * 255
+    b2 = colo2.b * 255
+    
+    rboundlow, rboundhigh = r1 - tolerance, r1 + tolerance
+    gboundlow, gboundhigh = g1 - tolerance, g1 + tolerance
+    bboundlow, bboundhigh = b1 - tolerance, b1 + tolerance
+    if rboundhigh < r2 or rboundlow > r2 then
+        return false
+    end
+    if gboundhigh < g2 or gboundlow > g2 then
+        return false
+    end
+    if bboundhigh < b2 or bboundlow > b2 then
+        return false
+    end
+    return true
 end
 
 function love.mousepressed(argx, argy, button, istouch, presses)
@@ -200,73 +282,208 @@ function love.mousepressed(argx, argy, button, istouch, presses)
     argx, argy = love.mouse.getPosition()
     wasbutton = false
     c = nil
-    for i, button in pairs(buttons) do
-        if argx > button.x and argx < button.x + button.sprite:getWidth() and
-            argy > button.y and argy < button.y + button.sprite:getHeight() then
-            wasbutton = true
-            if button.pressed and button == lastbutton then
-                -- cvects = {color = button.color}
-                locked = false
-                button.pressed = not button.pressed
-            else
-                if not locked and not button.down then
-                    lastbutton = button
-                    -- generate new vectors tied to the cursor for this button
-                    mag = 400
-                    for i, v in pairs(button.vectors) do
-                        cvects.color = button.color
-                        table.insert(cvects, mag * v)
-                    end
-                    love.mouse.setVisible(false)
-                    sounds.playmore()
-                    locked = true
+    if not mode.display then
+        
+        
+        --button section
+        for i, button in pairs(buttons) do
+            if argx > button.x and argx < button.x + button.sprite:getWidth() and
+                argy > button.y and argy < button.y + button.sprite:getHeight() then
+                wasbutton = true
+                if button.pressed and button == lastbutton then
+                    -- cvects = {color = button.color}
+                    locked = false
                     button.pressed = not button.pressed
+                else
+                    if not locked and not button.down then
+                        lastbutton = button
+                        -- generate new vectors tied to the cursor for this button
+                        mag = 400
+                        if cvects.colorcenter then
+                            cvects.colorcenter.x = button.colorcenter.x
+                            cvects.colorcenter.y = button.colorcenter.y
+                        else
+                            
+                            cvects.colorcenter = {x = 0, y = 0}
+                        end
+                        cvects.color = button.color
+                        for i, v in pairs(button.vectors) do
+                            
+                            table.insert(cvects, mag * v)
+                        end
+                        -- love.mouse.setVisible(false)
+                        sounds.playmore()
+                        locked = true
+                        button.pressed = not button.pressed
+                    end
+                end
+            end
+        end
+        
+        -- if we are inside the viewing area, place the current vectors on the screen
+        if not wasbutton and locked then
+            
+            lastbutton.down = true
+            vgrp = {
+                x = argx,
+                y = argy,
+                -- this needs to be deep copy
+                vs = cvects
+            }
+            match = true
+            --go through avects and verify whether they're all the same color
+            for i, colvg in pairs(avects) do
+                if not game.colorsmatch(colvg.vs.color, vgrp.vs.color, 100) then
+                    --error and drop!
+                    match = false
+                    game.reset()
+                end
+            end
+            if match then
+                
+                --insert the vector and
+                table.insert(avects, vgrp)
+                -- table.insert(apoints, {p1 = argx, p2 = argy})
+                if cvects.colorcenter then
+                    cvects = {colorcenter = {x = cvects.colorcenter.x, y = cvects.colorcenter.y}}
+                else
+                    cvects = {colorcenter = {x = 0, y = 0}}
+                end
+                love.mouse.setVisible(true)
+                -- cvects = {color = cvects.color}
+                locked = false
+                
+                ps = {}
+                rm = {}
+                for i, shape in pairs(ashapes) do
+                    --NEXT do this for each line in avects
+                    --vgrp is a group of two vectors "radiating" from a point. Each of the two vectors might
+                    --intersect with the current shape either zero, one, or two times, but only two times combined between the two vecotrs.
+                    --compose a line using two of the intersect points, and pass that line into the split function
+                    pts = {}
+                    for k, v in pairs(vgrp.vs) do
+                        if k ~= 'color' and k ~= 'colorcenters' then
+                            --This is for adding the points to the screen for debugging
+                            intr = game.addintersects(apoints, shape, vgrp.x, vgrp.y, v.x, v.y)
+                            if intr then
+                                --This is added in order to split this shape. If there aren't any intersects then we want to keep the shape
+                                game.addintersects(pts, shape, vgrp.x, vgrp.y, v.x, v.y)
+                            else
+                                table.insert(ps, shape)
+                            end
+                        end
+                    end
+                    if intr and #pts >= 2 then
+                        print(sets.tostring(shape))
+                        print(sets.tostring(vgrp))
+                        p = pts[1]
+                        q = pts[2]
+                        poly1, poly2 = split_poly(shape, p.p1, p.p2, q.p1 - p.p1, q.p2 - p.p2)
+                        table.insert(ps, poly1)
+                        table.insert(ps, poly2)
+                    -- split_poly(shape,p.p1,p.p2,q.p1,q.p2)
+                    --if it worked then add these and then gotta delete this one from ashapes
+                    end
+                end
+                
+                for _, i in pairs(rm) do table.remove(ashapes, i) end
+                
+                
+                for i, poly in pairs(ps) do
+                    game.addshapepoints(apoints, poly)
+                    table.insert(ashapes, poly)
+                end
+                
+                for i, shape in pairs(ashapes) do
+                    foundtarget = false
+                    selecteditems = {}
+                    for i, t in pairs(animation.tiles) do
+                        if shape:contains(t.cx, t.cy) then
+                            if t.ctarget then
+                                foundtarget = true
+                            end
+                            table.insert(selecteditems, t)
+                        end
+                    end
+                    if not foundtarget then
+                        shape.colo = {
+                            250 / 255,
+                            210 / 255,
+                            100 / 255,
+                            0.5
+                        
+                        }
+                        for i, t in pairs(selecteditems) do
+                            t.focus = false
+                        end
+                    else
+                        for i, t in pairs(selecteditems) do
+                            t.focus = true
+                        end
+                        shape.colo[4] = 0
+                    end
+                end
+            end
+        elseif not locked then
+            
+            --item section
+            if animation then
+                for i, tile in pairs(animation.tiles) do
+                    if tile and tile.focus and butt.alldown(buttons) then
+                        --enter displaymode
+                        colorsset = true
+                        if argx > tile.tx and argx < tile.tx + tile.tw and
+                            argy > tile.ty and argy < tile.ty + tile.th then
+                            mode.display = true
+                            found = items.find(i)
+                            if found then
+                                game.reset()
+                                butt.progress(buttons)
+                            end
+                        end
+                    end
+                
+                
                 end
             end
         end
     end
-
-    -- if we are inside the viewing area, place the current vectors on the screen
-    if not wasbutton and locked then
-        lastbutton.down = true
-        table.insert(avects, {
-            x = argx,
-            y = argy,
-            -- this needs to be deep copy
-            vs = cvects
-        })
-
-        table.insert(apoints, {p1 = argx, p2 = argy})
-
-        for i, v in pairs(cvects) do
-            if i ~= 'color' then
-                table.insert(apoints, {p1 = v.x + argx, p2 = v.y + argy})
-            end
-        end
-        cpoints = {}
-        cvects = {}
-        love.mouse.setVisible(true)
-        -- cvects = {color = cvects.color}
-        locked = false
+    
+    --journal
+    disparea = {x = 228, y = 228, w = 228 + 16, h = 228 + 16}
+    if not mode.display and argx > disparea.x and argx < disparea.w and
+        argy > disparea.y and argy < disparea.h then
+        --pause and show journal
+        mode.display = true
+    end
+    
+    disparea = {x = 219, y = 14, w = 232, h = 27}
+    if mode.display and argx > disparea.x and argx < disparea.w and
+        argy > disparea.y and argy < disparea.h then
+        mode.display = false
     end
 end
+
 
 function love.mousereleased(argx, argy, button, istouch, presses)
     -- Add current mouse position to vects array
     argx, argy = love.mouse.getPosition()
-
+    
     for i, button in pairs(buttons) do
-
+        
         if argx > button.x and argx < button.x + button.sprite:getWidth() and
             argy > button.y and argy < button.y + button.sprite:getHeight() then
             if button.pressed then
-
+                
                 cvects.color = button.color
-                button.pressed = not button.pressed
+                if cvects.colorcenter then
+                    cvects.colorcenter.x = button.colorcenter.x
+                    cvects.colorcenter.y = button.colorcenter.y
+                else
+                    
+                    cvects.colorcenter = {x = 0, y = 0}
+                end
             end
         end
     end
 end
-
-function love.wheelmoved(x, y) end
-

@@ -1,10 +1,27 @@
 sets = {}
+
+function sets.unique(table)
+    local hash = {}
+    local res = {}
+    
+    for _, v in ipairs(table) do
+        if (not hash[v]) then
+            res[#res + 1] = v -- you could print here instead of saving to result table if you wanted
+            hash[v] = true
+        end
+    
+    end
+    return res
+end
+
+
+
 function sets.intersects(a, b)
     local res = {}
     local count = 0
-
+    
     if (next(a) == nil or next(b) == nil) then return false end
-
+    
     for k, v in pairs(a) do
         if a[k] and b[k] then
             res[k] = true
@@ -17,21 +34,21 @@ function sets.intersects(a, b)
             count = count + 1
         end
     end
-
+    
     return count > 0
 end
 
 -- recur on nested tables
 function sets.tostring(tbl)
     local r = nil
-    for ikey, ival in sets.spairs(tbl) do
-
+    for ikey, ival in ipairs(tbl) do
+        
         if r then
             r = r .. ", "
         else
             r = "{ "
         end
-
+        
         r = r .. tostring(ikey) .. ":"
         if type(ival) == "table" then
             r = r .. sets.tostring(ival)
@@ -39,13 +56,13 @@ function sets.tostring(tbl)
             r = r .. tostring(ival)
         end
     end
-
+    
     if r then
         r = r .. " }"
     else
         r = ""
     end
-
+    
     return r
 end
 
@@ -75,9 +92,9 @@ function sets.append(tbla, tblb)
     local rtbl = tbla
     for i, v in pairs(tblb) do
         if rtbl[i] then
-
+            
             -- assert(false, "ERROR: index collision appending tables")
-        else
+            else
             rtbl[i] = v
         end
     end
@@ -89,9 +106,9 @@ function sets.spairs(t, order)
     local keys = {}
     if type(t) == 'table' then
         for k in pairs(t) do keys[#keys + 1] = k end
-
+        
         -- if order function given, sort by it by passing the table and keys a, b,
-        -- otherwise just sort the keys 
+        -- otherwise just sort the keys
         if order then
             table.sort(keys, function(a, b) return order(t, a, b) end)
         else
@@ -104,7 +121,7 @@ function sets.spairs(t, order)
                 end
             end)
         end
-
+        
         -- return the iterator function
         local i = 0
         return function()
@@ -124,11 +141,11 @@ end
 
 function sets.stringsplit(inputstr, sep)
     if sep == nil then
-            sep = "%s"
+        sep = "%s"
     end
-    local t={}
-    for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
-            table.insert(t, str)
+    local t = {}
+    for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
+        table.insert(t, str)
     end
     return t
 end

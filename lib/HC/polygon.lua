@@ -142,7 +142,11 @@ end
 local Polygon = {}
 function Polygon:init(...)
 	local vertices = removeCollinear( toVertexList({}, ...) )
-	assert(#vertices >= 3, "Need at least 3 non collinear points to build polygon (got "..#vertices..")")
+	-- assert(#vertices >= 3, "Need at least 3 non collinear points to build polygon (got "..#vertices..")")
+	if vertieces and #vertices >= 3 then 
+		self=nil  
+		return
+	end
 
 	-- assert polygon is oriented counter clockwise
 	local r = getIndexOfleftmost(vertices)

@@ -5,40 +5,45 @@ COLORS
     ☐ Lines start with a "center constant" that determines where the value 255/255/255 happens on the screen
     
     TILES
-    ☐ -split the item spritesheet into individual quads
-    ☐ -create objects for each item
-    ☐ -randomize how they're placed?
-    ☐ -associate text with them?
+    ✔ -split the item spritesheet into individual quads @done(21-01-30 23:44)
+    ✔ -create objects for each item @done(21-01-31 07:33)
+    ✔ list of target items @done(21-01-31 09:05)
+    ✔ current target item @done(21-01-31 09:05)
     
     STATE CHECKS
     For each stage, there is one or more items that need to be "found".
-    ☐ -Once ALL lines are placed, they are all checked for intersection. (only avects needs to be checked)
-            There are some exception cases; if there are only one or two lines left, instead of taking intersection, 
-            we will consider the whole screen enclosed by lines, and the edges of the screen can form shapes.
-    ☐ -Check each shape
-    ☐ -check the colors of the enclosing lines
-    ☐ -if all the lines are the same color, the encolsed items become "found"
-    ☐ -If the enclosed area of items includes target items, highlight the shape.
-        ☐ If ANY shape meets this criteria, it will be highlighted. If NONE meet the criteria, something flashes red? and the lines vanish (or fade)
+    ✔ -check the colors of all lines @done(21-01-31 11:17)
+    ✔ -Check each shape @done(21-01-31 09:46)
+    ✔ -if all the lines are the same color, the encolsed items in each shape become "found" @done(21-01-31 11:17)
+    ✔ -If the enclosed area of items includes target items, highlight the shape. @done(21-01-31 09:47)
+    ✔ If ANY shape meets this criteria, it will be highlighted. 
+    ☐ If NONE meet the criteria, something flashes red? and the lines vanish @done(21-01-31 09:47)
+    ☐ STRETCH lines fade instead of vanishing
+    
+    ✔ once there is an area of "found" items, the player is able to click on them. @done(21-01-31 11:17)
+    ☐ If the player clicks on the right item, they get a new journal page 
+    ✔ and the lines vanish. @done(21-01-31 11:18)
+    ☐ New BG and new color constants are applied to the buttons. Sound is turned off.
+    ✔ Button either falls off or is found again after only one button remains. @done(21-01-31 11:18)
+    ✔ If the player clicks a wrong item, a random non-essential items falls away, permanently. @done(21-01-31 11:18)
 
-    ☐ once there is an area of "found" items, the player is able to click on them.
-        ☐ If the player clicks on the right item, they get a new journal page and the lines vanish. New BG and new color constants are applied to the buttons. Sound is turned off.
-        ☐ Button either falls off or is found again after only one button remains.
-        ☐ If the player clicks a wrong item, a random non-essential items falls away, permanently.
-SOUND
+    SOUND
     ✔ Apply sounds as the player clicks buttons. The sounds happen in a perscribed order regardless of which buttton is clicked. @done(21-01-30 12:28)
+    ☐ Add sound effects; button down/up
+    ☐ Add sound effects; clicked wrong, lines wrong
+    ☐ Add sound effects; clicked right (lines right?)
 
-STORY
-    ☐ -need a way to show text for story and hints. 
-        (will this be a different screen? A box that overlays? A journal menu?)
+    STORY
+    ✔ -display screen @done(21-01-30 23:45)
+    ☐ -Print text on display screen on event. Once there is a new level, and once lines have been placed correctly.
+    ☐ -associate text with items. Two texts per item
+    ☐ -Show first text on level beginning to help with color, and second text once lines are all placed to help pick item
+    ☐ -text is retained and can be viewed on the display.
 
+    EMBELISH
+    ☐ change gradient BG once a item has been found
+    ✔ drop button once item has been found, until one button, then increase number of buttons after that. @done(21-01-31 11:18)
 
 STUFF TO MAKE
-    ☐ pressed buttons
-    ☐ sparkle
-    ☐ text box
-
-
-once ALL lines have been placed, check for shapes
-if ANY shape contains the target item, highlight the area
-You can now click on the items in that area.
+    ✔ pressed buttons @done(21-01-31 07:37)
+    ✔ text box @done(21-01-30 23:48)

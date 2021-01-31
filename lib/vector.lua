@@ -1,7 +1,7 @@
 local module = {
   _version = "vector.lua v2019.14.12",
   _description = "a simple vector library for Lua based on the PVector class from processing",
-  _url = "https://github.com/themousery/vector.lua",
+  _url = "",
   _license = [[
     Copyright (c) 2018 themousery
 
