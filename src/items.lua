@@ -15,7 +15,7 @@ function items.animation(image, duration)
     local animation = {}
     animation.sheet = image
     animation.tiles = {}
-    animation.targets = {19, 18, 28, 53, 20, 39, 54, 25, 32, 46, 56, 5, 42, 44, 10}
+    animation.targets = {19, 24, 28, 53,18, 39, 54, 25, 32, 46, 8, 5, 42, 23, 10}
     animation.targettext =
         {
             {colo = [[Entry 255:
@@ -40,9 +40,34 @@ impervious and solid.]]
             
             
             },
+            {colo = [[Entry 270:
+While tuning several days ago, 
+I found a deep colour, reminiscent 
+of purple, but still unique. 
+Not a light faded blue, but...
+            
+]]
+                
+                
+                
+                
+                
+                , item = [[...dark blue, like 
+I heard stories about. A substance 
+so vast and transient that still 
+held life deep inside.]]
+            
+            
+
+
+
+
+
+
+            },
             {colo = [[Entry 275:
 I had been searching for more ancient 
-tales about ‘oceans’ and ‘seas’, and 
+tales about oceans and seas, and 
 discovered some small snippet about 
 a mirroring colour, reflecting off 
 surfaces of the seas...
@@ -58,6 +83,12 @@ also housed sentient life, like the
 oceans.]]
             
             
+
+
+
+
+
+
             },
             {colo = [[Entry 276:
 I had a trinket disappear yesterday. 
@@ -65,17 +96,13 @@ It was thought for a long time that only
 non-manufactured substances disappeared but 
 I’ve seen otherwise. It was my favorite colour, 
 a gently mix of yellow and blue...
-(tune to green)
 ]]
-                
-                
-                
                 
                 
                 
                 , item = [[...and apparently there was organic 
 matter of the same colour, carpeting the ground 
-as “grass”. It was alive, and even housed and 
+as grass. It was alive, and even housed and 
 fed creatures in their own micro-environment.]]
             
             
@@ -128,7 +155,8 @@ until my fingers are pink...
                 
                 
                 
-                , item = [[...and I’m starting to think I may 
+                , item = [[...and I’m starting 
+to think I may 
 have exhausted all the documented resources available. 
 Maybe it’s time I step outside on my own and see what 
 could be left and start my own documentation. 
@@ -319,6 +347,7 @@ function items.find(i)
             tile.cx = tile.tx + tile.tw / 2
             tile.cy = tile.ty + tile.th / 2
             items.next()
+            animation.currenttext = animation.targettext[animation.next]
             return true
         else
             r = math.random(1, #animation.noness)
@@ -336,7 +365,6 @@ function items.next()
         
         ti = animation.targets[animation.next]
         animation.tiles[ti].ctarget = true
-        animation.currenttext = animation.targettext[animation.next]
         return animation.tiles[animation.next]
     else
         print('win!')
@@ -361,8 +389,6 @@ timer = 0
 function items.update(dt)
     mx, my = love.mouse.getPosition()
     for i, t in pairs(animation.tiles) do
-        -- print(t.tx,t.ty)
-        -- print(mx,my,t.tx,)
         if mx > t.tx and mx < t.tx + t.tw and my > t.ty and my < t.ty + t.th then
             t.selected = true
         else
@@ -402,7 +428,6 @@ function items.drawfound()
             else
                 love.graphics.draw(animation.sheet, t.f2, t.tx, t.ty)
             end
-        
         end
     end
 end

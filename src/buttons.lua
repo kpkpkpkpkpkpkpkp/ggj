@@ -22,11 +22,11 @@ function butt.drop(bs, i)
 end
 
 function butt.restore(bs, i)
-    bs[i].dropped = true
+    bs[i].dropped = false
 end
 
 function butt.progress(bs)
-    if dropcounter < 7 then
+    if dropcounter <= 7 then
         butt.drop(bs, droporder[dropcounter])
         dropcounter = dropcounter + 1
     elseif restorecounter < 7 then
@@ -34,6 +34,7 @@ function butt.progress(bs)
         restorecounter = restorecounter + 1
     else
         print('win!')
+        return 'win'
     end
 
 end
