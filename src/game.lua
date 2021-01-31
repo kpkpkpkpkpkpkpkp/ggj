@@ -228,17 +228,17 @@ function game.draw()
                         button.x,
                         button.y)
                     love.graphics.setColor(0, 0, 255)
-                    love.graphics.print(i,
-                        button.x,
-                        button.y)
+                    -- love.graphics.print(i,
+                    --     button.x,
+                    --     button.y)
                     love.graphics.setColor(255, 255, 255)
                 else
                     
                     love.graphics.draw(button.sprite, button.x, button.y)
                     love.graphics.setColor(0, 0, 255)
-                    love.graphics.print(i,
-                        button.x,
-                        button.y)
+                    -- love.graphics.print(i,
+                    --     button.x,
+                    --     button.y)
                     love.graphics.setColor(255, 255, 255)
                 end
             

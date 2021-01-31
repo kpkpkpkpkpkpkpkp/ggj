@@ -1,7 +1,7 @@
 if os.getenv("LOCAL_LUA_DEBUGGER_VSCODE") == "1" then
     require("lldebugger").start()
 end
-
+love.graphics.setDefaultFilter("nearest", "nearest" )
 require 'src.game'
 scale={x=2.5,y=2.5}
 local __newImage = love.graphics.newImage -- old function
