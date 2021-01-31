@@ -23,7 +23,9 @@ res = {x = 248, y = 248}
 bgwidth = 720
 -- All vectors placed on the screen
 avects = {}
-mode = {play = true, display = true,win=false}
+mode = {play = false, display = false, win = false, title = true}
+
+--click anywhere to start and switch to play=true and display=true
 -- Coords + image
 buttons = require 'src.buttons'
 lock = false
@@ -31,6 +33,10 @@ holding = false
 lastbutton = nil
 function game.load()
     -- love.audio.setVolume(0)
+    openingbg = love.audio.newSource('assets/sounds/old/20210127_mysterious_tune.mp3', 'stream')
+    openingbg:setLooping(true)
+    endingbg = love.audio.newSource('assets/sounds/credits.ogg', 'stream')
+    endingbg:setLooping(true)
     font = love.graphics.newFont('assets/fonts/VT323-Regular.ttf', 80)
     font:setFilter('nearest', 'nearest')
     sounds.load()
@@ -38,6 +44,7 @@ function game.load()
     collider = HC.new()
     bgcanvas = love.graphics.newCanvas(bgwidth, res.x)
     border = love.graphics.newImage('assets/Screen.png')
+    title = love.graphics.newImage('assets/sprites/TitleScreenWMNMachine.png')
     credits = love.graphics.newImage('assets/sprites/EndAnimation-Sheet.png')
     game.credits()
     dispbutton = love.graphics.newImage('assets/sprites/ButtonDisplay.png')
@@ -64,16 +71,16 @@ end
 
 
 function game.credits()
-    quads={}
-    for i=0,credits:getWidth(),248 do
-        table.insert(quads,love.graphics.newQuad(i,0,248,744,credits:getWidth(),credits:getHeight()))
+    quads = {}
+    for i = 0, credits:getWidth(), 248 do
+        table.insert(quads, love.graphics.newQuad(i, 0, 248, 744, credits:getWidth(), credits:getHeight()))
     end
-    cquad=quads[1]
-    credct=0
-    credy=res.y-credits:getHeight()
-speed=4
-quadcount=1
-credscrollspeed=30
+    cquad = quads[1]
+    credct = 0
+    credy = res.y - credits:getHeight()
+    speed = 4
+    quadcount = 1
+    credscrollspeed = 30
 end
 
 function game.addshapepoints(points, shape)
@@ -96,13 +103,21 @@ function game.addintersects(points, shape, x, y, dx, dy)
 end
 
 function game.update(dt)
-    if credy < 0 then 
-        credy=credy+(dt*credscrollspeed) 
-        credct=credct+(dt*speed)
-        if credct>1 and #quads > quadcount then
-            cquad=quads[quadcount]
-            quadcount=quadcount+1
-            credct=0
+    if mode.title then
+        love.audio.play(openingbg)
+    end
+
+    if mode.win then
+        -- love.audio.stop()
+        love.audio.play(endingbg)
+    end
+    if credy < 0 then
+        credy = credy + (dt * credscrollspeed)
+        credct = credct + (dt * speed)
+        if credct > 1 and #quads > quadcount then
+            cquad = quads[quadcount]
+            quadcount = quadcount + 1
+            credct = 0
         end
     end
     
@@ -159,8 +174,10 @@ function game.update(dt)
 end
 
 function game.draw()
-    if mode.win then        
-        love.graphics.draw(credits,cquad,0,credy)
+    if mode.title then
+        love.graphics.draw(title, 0, 0)
+    elseif mode.win then
+        love.graphics.draw(credits, cquad, 0, credy)
     else
         
         
@@ -214,13 +231,13 @@ function game.draw()
         items.drawfound()
         
         love.graphics.setNewFont(10)
-
+        
         -- disparea = {x = 228, y = 228, w = 228 + 16, h = 228 + 16}
         love.graphics.draw(dispbutton,
-                        228,
-                        228)
-    
-    --journal
+            228,
+            228)
+        
+        --journal
         for i, button in pairs(buttons) do
             if not button.dropped then
                 if button.pressed then
@@ -288,12 +305,9 @@ function game.reset()
     love.mouse.setVisible(true)
     locked = false
     colorsset = false
-    
-    mode.display = true
 end
 
 function game.colorsmatch(colo1, colo2, tolerance)
-    if DEBUG then return true end
     r1 = colo1.r * 255
     g1 = colo1.g * 255
     b1 = colo1.b * 255
@@ -318,6 +332,14 @@ function game.colorsmatch(colo1, colo2, tolerance)
 end
 
 function love.mousepressed(argx, argy, button, istouch, presses)
+    
+    if mode.title then
+        mode.title = false
+        mode.display = true
+        mode.play = true
+        openingbg:stop()
+        -- love.audio.stop()
+    end
     -- Add current mouse position to vects array
     argx, argy = love.mouse.getPosition()
     wasbutton = false
@@ -472,6 +494,7 @@ function love.mousepressed(argx, argy, button, istouch, presses)
                             found = items.find(i)
                             if found then
                                 game.reset()
+                                mode.display=true
                                 win = butt.progress(buttons)
                                 if win then
                                     mode.win = true
@@ -493,9 +516,9 @@ function love.mousepressed(argx, argy, button, istouch, presses)
         mode.display = true
     end
     
-    disparea = {x = 219, y = 14, w = 232, h = 27}
-    if mode.display and argx > disparea.x and argx < disparea.w and
-        argy > disparea.y and argy < disparea.h then
+    cdisparea = {x = 219, y = 14, w = 232, h = 27}
+    if mode.display and argx > cdisparea.x and argx < cdisparea.w and
+        argy > cdisparea.y and argy < cdisparea.h then
         mode.display = false
     end
 end
