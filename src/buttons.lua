@@ -5,7 +5,7 @@ butt = {}
 dropcounter = 1
 droporder = {'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'}
 restorecounter = 1
-restoreorder = {'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'}
+restoreorder = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}
 
 function butt.alldown(bs)
     r = true
@@ -74,8 +74,8 @@ return {
         down = false,
         dropped = false,
         vectors = {
-            vector.fromAngle(math.pi / 4),
-            vector.fromAngle((math.pi / 4) - math.pi)
+            vector.fromAngle(math.pi / 2),
+            vector.fromAngle((math.pi / 2) - math.pi)
         },
         color = {r = 1,
         g = 0,
@@ -118,8 +118,8 @@ return {
         down = false,
         dropped = false,
         vectors = {
-            vector.fromAngle((3 * math.pi / 4)),
-            vector.fromAngle((3 * math.pi / 4) - math.pi)
+            vector.fromAngle(math.pi),
+            vector.fromAngle(2 * math.pi)
         },
         color = {r = 1,
         g = 0,
@@ -162,8 +162,8 @@ return {
         down = false,
         dropped = false,
         vectors = {
-            vector.fromAngle(math.pi),
-            vector.fromAngle(2 * math.pi)
+            vector.fromAngle((3 * math.pi / 4)),
+            vector.fromAngle((3 * math.pi / 4) - math.pi)
         },
         color = {r = 1,
         g = 0,
@@ -184,8 +184,8 @@ return {
         down = false,
         dropped = false,
         vectors = {
-            vector.fromAngle(math.pi / 2),
-            vector.fromAngle((math.pi / 2) - math.pi)
+            vector.fromAngle(math.pi / 4),
+            vector.fromAngle((math.pi / 4) - math.pi)
         },
         color = {r = 1,
         g = 0,

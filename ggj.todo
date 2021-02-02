@@ -2,47 +2,71 @@
 COLORS
     ✔ -allow each button to create different colored line @started(21-01-29 14:20) @done(21-01-29 15:03) @lasted(43m55s)
     ✔ Lines change colors as they cross the screen @done(21-01-30 11:06)
-    ☐ Lines start with a "center constant" that determines where the value 255/255/255 happens on the screen
-    
+    ✔ Lines start with a "center constant" that determines where the value 255/255/255 happens on the screen @done(21-01-31 17:24)
+        To define "Center Constant";        
+    ☐ For some arbitrary point on each line in the 'victory' condition, Set that line's button's 'color center' as that point's X,Y coordinates
+    ☐ Set one color as the target color for each 'level'
+    ☐ Figure out a formula for varying the color so that the line will always gradiate towards the target color when the mouse is closer to that line's color center point.
+
     TILES
     ✔ -split the item spritesheet into individual quads @done(21-01-30 23:44)
     ✔ -create objects for each item @done(21-01-31 07:33)
     ✔ list of target items @done(21-01-31 09:05)
     ✔ current target item @done(21-01-31 09:05)
     
+    REFACTOR
+    ☐ create 'placeline' method
+    ☐ create 'newlevel' method
+    ☐ create 'runchecks' method
+    ☐ create 'shapechecks' method
+    ☐ create 'line' module, 'init, update, draw'
+    ☐ refactor button module, create an 'init, update, draw' etc
+    ☐ make display stuff into buttons?
+
     STATE CHECKS
-    For each stage, there is one or more items that need to be "found".
+    For each stage, there is one item that needs to be "found".
     ✔ -check the colors of all lines @done(21-01-31 11:17)
     ✔ -Check each shape @done(21-01-31 09:46)
     ✔ -if all the lines are the same color, the encolsed items in each shape become "found" @done(21-01-31 11:17)
     ✔ -If the enclosed area of items includes target items, highlight the shape. @done(21-01-31 09:47)
     ✔ If ANY shape meets this criteria, it will be highlighted. 
-    ☐ If NONE meet the criteria, something flashes red? and the lines vanish @done(21-01-31 09:47)
-    ☐ STRETCH lines fade instead of vanishing
-    
     ✔ once there is an area of "found" items, the player is able to click on them. @done(21-01-31 11:17)
-    ☐ If the player clicks on the right item, they get a new journal page 
+    ✔ If the player clicks on the right item, they get a new journal page @done(21-01-31 17:23)
     ✔ and the lines vanish. @done(21-01-31 11:18)
-    ☐ New BG and new color constants are applied to the buttons. Sound is turned off.
+    ✔ Sound is turned off. @done(21-01-31 17:25)
     ✔ Button either falls off or is found again after only one button remains. @done(21-01-31 11:18)
     ✔ If the player clicks a wrong item, a random non-essential items falls away, permanently. @done(21-01-31 11:18)
+    ☐ When a line is placed, check that it matches the target color. If not, drop ALL lines.
+    ☐ Once item has been found, the target color changes.
+    ☐ New BG and new color constants are applied to the buttons. 
 
+    
     SOUND
     ✔ Apply sounds as the player clicks buttons. The sounds happen in a perscribed order regardless of which buttton is clicked. @done(21-01-30 12:28)
-    ☐ Add sound effects; button down/up
     ☐ Add sound effects; clicked wrong, lines wrong
     ☐ Add sound effects; clicked right (lines right?)
-
+    
     STORY
     ✔ -display screen @done(21-01-30 23:45)
-    ☐ -Print text on display screen on event. Once there is a new level, and once lines have been placed correctly.
-    ☐ -associate text with items. Two texts per item
-    ☐ -Show first text on level beginning to help with color, and second text once lines are all placed to help pick item
-    ☐ -text is retained and can be viewed on the display.
-
+    ✔ -Print text on display screen on event. Once there is a new level, and once lines have been placed correctly. @done(21-01-31 17:23)
+    ✔ -associate text with items. Two texts per item @done(21-01-31 17:23)
+    ✔ -Show first text on level beginning to help with color, and second text once lines are all placed to help pick item @done(21-01-31 17:23)
+    ✔ -text is retained and can be viewed on the display. @done(21-01-31 17:24)
+    
     EMBELISH
-    ☐ change gradient BG once a item has been found
     ✔ drop button once item has been found, until one button, then increase number of buttons after that. @done(21-01-31 11:18)
+    ☐ change gradient BG once a item has been found
+    ☐ animate drops of buttons/items instead of quick vanish
+    ☐ void swallows up tiles and buttons instead of vanishing
+    ☐ animate display up/down
+    ☐ Music fade out and transitions.
+    ☐ dropped lines fade instead of vanishing
+    
+    BUGS
+    ☐ retain minimum shapes in ashapes
+    ☐ Fix sound effects; button down/up
+    ☐ fix font (make it use nearest neighbor)
+    
 
 STUFF TO MAKE
     ✔ pressed buttons @done(21-01-31 07:37)

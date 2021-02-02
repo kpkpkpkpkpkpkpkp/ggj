@@ -106,7 +106,7 @@ function game.update(dt)
     if mode.title then
         love.audio.play(openingbg)
     end
-
+    
     if mode.win then
         -- love.audio.stop()
         love.audio.play(endingbg)
@@ -253,9 +253,9 @@ function game.draw()
                     
                     love.graphics.draw(button.sprite, button.x, button.y)
                     love.graphics.setColor(0, 0, 255)
-                    -- love.graphics.print(i,
-                    --     button.x,
-                    --     button.y)
+                    love.graphics.print(i,
+                        button.x,
+                        button.y)
                     love.graphics.setColor(255, 255, 255)
                 end
             
@@ -308,6 +308,7 @@ function game.reset()
 end
 
 function game.colorsmatch(colo1, colo2, tolerance)
+    if DEBUG then return true end
     r1 = colo1.r * 255
     g1 = colo1.g * 255
     b1 = colo1.b * 255
@@ -338,7 +339,7 @@ function love.mousepressed(argx, argy, button, istouch, presses)
         mode.display = true
         mode.play = true
         openingbg:stop()
-        -- love.audio.stop()
+    -- love.audio.stop()
     end
     -- Add current mouse position to vects array
     argx, argy = love.mouse.getPosition()
@@ -494,7 +495,7 @@ function love.mousepressed(argx, argy, button, istouch, presses)
                             found = items.find(i)
                             if found then
                                 game.reset()
-                                mode.display=true
+                                mode.display = true
                                 win = butt.progress(buttons)
                                 if win then
                                     mode.win = true

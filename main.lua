@@ -6,8 +6,8 @@ require 'src.game'
 scale={x=2.5,y=2.5}
 local __newImage = love.graphics.newImage -- old function
 local __getPosition = love.mouse.getPosition -- old function
-DEBUG = false
--- DEBUG = true
+-- DEBUG = false
+DEBUG = true
 
 function love.mouse.getPosition() -- new function that sets nearest filter
     local x,y = __getPosition() -- call old function with all arguments to this function
@@ -46,7 +46,7 @@ function love.draw()
     -- DEBUG not drawn on canvas
     if DEBUG then
         offset = 16 -- distance from edges for debug text
-        love.graphics.setColor(0, 0, 255, 255)
+        love.graphics.setColor(255, 0, 255, 255)
         for i, debug in pairs(debuglines) do
             offset = offset + 16
             love.graphics.print(debug, 16, love.graphics.getHeight() - offset)
