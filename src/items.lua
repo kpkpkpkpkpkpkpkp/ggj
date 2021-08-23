@@ -1,10 +1,10 @@
 items = {}
-animation = nil
+matrix = nil
 local vector = require 'lib.vector'
 
 function items.load()
     local i = love.graphics.newImage('assets/Items-Sheet.png')
-    animation = items.animation(i, 0.3)
+    matrix = items.animation(i, 0.3)
 
 --set up 15 as targets
 --set up one as current target
@@ -12,11 +12,11 @@ function items.load()
 end
 
 function items.animation(image, duration)
-    local animation = {}
-    animation.sheet = image
-    animation.tiles = {}
-    animation.targets = {19, 24, 28, 53,18, 39, 54, 25, 32, 46, 8, 5, 42, 23, 10}
-    animation.targettext =
+    local matrix = {}
+    matrix.sheet = image
+    matrix.tiles = {}
+    matrix.targets = {19, 24, 28, 53,18, 39, 54, 25, 32, 46, 8, 5, 42, 23, 10}
+    matrix.targettext =
         {
             {colo = [[Entry 255:
 At least colour hasn't been lost. 
@@ -239,7 +239,7 @@ day I can bring back some of what
 has been lost.]]
 },
 }
-    animation.foundloc = {vector(81, -2),
+    matrix.foundloc = {vector(81, -2),
         vector(100, -2),
         vector(124, -2),
         vector(148, -2),
@@ -255,10 +255,10 @@ has been lost.]]
         vector(126, 230),
         vector(150, 230)
     }
-    animation.noness = {}
-    animation.next = 1
-    animation.currenttext = animation.targettext[animation.next]
-    -- animation.targets = {}
+    matrix.noness = {}
+    matrix.next = 1
+    matrix.currenttext = matrix.targettext[matrix.next]
+    -- matrix.targets = {}
     for y = 28, 196, 24 do
         for x = 28, 196, 24 do
             tile = {
@@ -280,41 +280,41 @@ has been lost.]]
             --cx cy are center point, used to determine which items fall within a shape
             tile.cx = tile.tx + tile.tw / 2
             tile.cy = tile.ty + tile.th / 2
-            table.insert(animation.tiles, tile)
+            table.insert(matrix.tiles, tile)
         end
     end
-    for _, i in pairs(animation.targets) do
-        animation.tiles[i].target = true
+    for _, i in pairs(matrix.targets) do
+        matrix.tiles[i].target = true
     end
-    for i = 1, #animation.tiles, 1 do
-        if not animation.tiles[i].target then
-            table.insert(animation.noness, i)
+    for i = 1, #matrix.tiles, 1 do
+        if not matrix.tiles[i].target then
+            table.insert(matrix.noness, i)
         end
     end
     
-    animation.tiles[animation.targets[1]].ctarget = true
+    matrix.tiles[matrix.targets[1]].ctarget = true
     
-    animation.duration = duration or 1
+    matrix.duration = duration or 1
     
-    return animation
-end --animation.targets = {1, 2, 3, 4, 17, 18, 10, 25, 11, 12, 13, 14, 19, 21, 22}
+    return matrix
+end --matrix.targets = {1, 2, 3, 4, 17, 18, 10, 25, 11, 12, 13, 14, 19, 21, 22}
 
 function items.find(i)
-    local tile = animation.tiles[i]
+    local tile = matrix.tiles[i]
     if not tile.dropped then
         if tile.ctarget == true then
             tile.found = true
             tile.ctarget = false
-            tile.tx, tile.ty = animation.foundloc[animation.next]:unpack()
+            tile.tx, tile.ty = matrix.foundloc[matrix.next]:unpack()
             tile.cx = tile.tx + tile.tw / 2
             tile.cy = tile.ty + tile.th / 2
             items.next()
-            animation.currenttext = animation.targettext[animation.next]
+            matrix.currenttext = matrix.targettext[matrix.next]
             return true
         else
-            r = math.random(1, #animation.noness)
-            ri = animation.noness[r]
-            table.remove(animation.noness, r)
+            r = math.random(1, #matrix.noness)
+            ri = matrix.noness[r]
+            table.remove(matrix.noness, r)
             items.drop(ri)
             return false
         end
@@ -322,25 +322,25 @@ function items.find(i)
 end
 
 function items.next()
-    if animation.next < 15 then
-        animation.next = animation.next + 1
+    if matrix.next < 15 then
+        matrix.next = matrix.next + 1
         
-        ti = animation.targets[animation.next]
-        animation.tiles[ti].ctarget = true
-        return animation.tiles[animation.next]
+        ti = matrix.targets[matrix.next]
+        matrix.tiles[ti].ctarget = true
+        return matrix.tiles[matrix.next]
     else
         print('win!')
     end
 end
 
 function items.drop(i)
-    tile = animation.tiles[i]
+    tile = matrix.tiles[i]
     if i then
         tile.dropped = true
     else
-        r = math.random(1, #animation.noness)
-        ri = animation.noness[r]
-        tile = animation.tiles[ri]
+        r = math.random(1, #matrix.noness)
+        ri = matrix.noness[r]
+        tile = matrix.tiles[ri]
         if tile then
             tile.dropped = true
         end
@@ -350,7 +350,7 @@ end
 timer = 0
 function items.update(dt)
     mx, my = love.mouse.getPosition()
-    for i, t in pairs(animation.tiles) do
+    for i, t in pairs(matrix.tiles) do
         if mx > t.tx and mx < t.tx + t.tw and my > t.ty and my < t.ty + t.th then
             t.selected = true
         else
@@ -366,16 +366,16 @@ function items.update(dt)
 end
 
 function items.draw()
-    for i, t in pairs(animation.tiles) do
+    for i, t in pairs(matrix.tiles) do
         if not t.dropped and not t.found then
             if t.selected then
                 if t.ct > t.d then
-                    love.graphics.draw(animation.sheet, t.f1, t.tx, t.ty)
+                    love.graphics.draw(matrix.sheet, t.f1, t.tx, t.ty)
                 else
-                    love.graphics.draw(animation.sheet, t.f2, t.tx, t.ty)
+                    love.graphics.draw(matrix.sheet, t.f2, t.tx, t.ty)
                 end
             else
-                love.graphics.draw(animation.sheet, t.f1, t.tx, t.ty)
+                love.graphics.draw(matrix.sheet, t.f1, t.tx, t.ty)
             end
         end
     end
@@ -383,12 +383,12 @@ end
 
 
 function items.drawfound()
-    for i, t in pairs(animation.tiles) do
+    for i, t in pairs(matrix.tiles) do
         if t.found then
             if t.ct > t.d then
-                love.graphics.draw(animation.sheet, t.f1, t.tx, t.ty)
+                love.graphics.draw(matrix.sheet, t.f1, t.tx, t.ty)
             else
-                love.graphics.draw(animation.sheet, t.f2, t.tx, t.ty)
+                love.graphics.draw(matrix.sheet, t.f2, t.tx, t.ty)
             end
         end
     end
