@@ -32,6 +32,7 @@ holding = false
 lastbutton = nil
 
 function game.load()
+    -- love.audio.setVolume(0.5)
     love.audio.setVolume(0)
     cur = love.mouse.getSystemCursor("hand")
     love.mouse.setCursor(cur)
@@ -123,8 +124,7 @@ function game.progress()
     --this is going to switch between the screens and
     --inbetweens after we switch to a new level
     currentbg = screen
-    targetcolor = levelcolors[1]
-
+    targetcolor = butt.getcolor(levelct)
 end
 
 function game.credits()
@@ -192,14 +192,15 @@ function game.update(dt)
         --TODO: Right now, any line will always create the same color when the mouse is in the same position on the screen.
         --WANT to make an offset per-button per-level that 'shifts' the location of colors for that line.
         --FOR EXAMPLE: White is always at the max width and height. We can change the position of white to a different location, which will shift where the line needs to be placed for the color to work.
-        v = cvects['color']
-        cc = cvects['colorcenter']
-        if v and cc then
-            cx, cy = cc.x, cc.y
-            v.r = (((mx + cx) % 255) / 255)
-            v.b = (((my + cy) % 255) / 255)
-            v.g = 0 / 255 -- (my-mx/255)
-        end
+        
+        -- v = cvects['color']
+        -- cc = cvects['colorcenter']
+        -- if v and cc then
+        --     cx, cy = cc.x, cc.y
+        --     v.r = (((mx + cx) % 255) / 255)
+        --     v.b = (((my + cy) % 255) / 255)
+        --     v.g = 0 / 255 -- (my-mx/255)
+        -- end
     end
 end
 
@@ -376,19 +377,19 @@ end
 
 function game.createvectors(button)
     mag = 400
-    if cvects.colorcenter then
-        cvects.colorcenter.x = button.colorcenter.x
-        cvects.colorcenter.y = button.colorcenter.y
-    else
-        cvects.colorcenter = {x = 0, y = 0}
+    coords = butt.getcenter(button.label)
+    if not cvects.colorcenter then
+        cvects.colorcenter = {}
     end
-    cvects.color = button.color
+    cvects.colorcenter.x = button.colorcenter.x
+    cvects.colorcenter.y = button.colorcenter.y
+    
+    cvects.color = butt.getcolor(button.label)
     for i, v in pairs(button.vectors) do
         table.insert(cvects, mag * v)
     end
     -- love.mouse.setVisible(false)
     sounds.playmore()
-
 end
 
 function game.buttonclicked(argx, argy, button, istouch, presses)

@@ -83,7 +83,6 @@ function areCollinear(p, q, r, eps)
     return math.abs(hcvector.det(q.x - p.x, q.y - p.y, r.x - p.x, r.y - p.y)) <= (eps or 1e-32)
 end
 
-
 app = {}
 function appSortPointsClockwise(points)
     local centerPoint = appGetCenterPointOfPoints(points)
