@@ -39,7 +39,7 @@ end
 function love.draw()
     love.graphics.setCanvas(canvas)
     love.graphics.clear()
-    game.draw()
+    game.draw(debuglines)
     love.graphics.setCanvas()
     love.graphics.draw(canvas,0,0,0,scale.x,scale.y)
 

@@ -6,9 +6,14 @@ local buttons = require 'src.buttons'
 require 'src.sounds'
 require 'src.items'
 require 'src.split_poly'
+local levels = require 'src.levels'
 
+releasecounter = 0
 game = {}
-mode = {play = false, display = false, win = false, title = true}
+mode = {play = false, 
+        display = false, 
+        win = false, 
+        title = true}
 
 bg = {x = 0, y = 0}
 scrollspeed = 1
@@ -51,59 +56,7 @@ function game.load()
     display = display2
     displayct = 0
     
-    levelct = 0
-    screens = {
-        love.graphics.newImage('assets/Backgrounds/GradientOne.png'),
-        love.graphics.newImage('assets/Backgrounds/GradientTwo.png'),
-        love.graphics.newImage('assets/Backgrounds/GradientThree.png'),
-        love.graphics.newImage('assets/Backgrounds/GradientFour.png'),
-        love.graphics.newImage('assets/Backgrounds/GradientFive.png'),
-        love.graphics.newImage('assets/Backgrounds/GradientSix.png'),
-        love.graphics.newImage('assets/Backgrounds/GradientSeven.png'),
-        love.graphics.newImage('assets/Backgrounds/GradientEight.png'),
-        love.graphics.newImage('assets/Backgrounds/GradientNine.png'),
-        love.graphics.newImage('assets/Backgrounds/GradientTen.png'),
-        love.graphics.newImage('assets/Backgrounds/GradientEleven.png'),
-        love.graphics.newImage('assets/Backgrounds/GradientTwelve.png'),
-        love.graphics.newImage('assets/Backgrounds/GradientThirteen.png'),
-        love.graphics.newImage('assets/Backgrounds/GradientFourteen.png'),
-        love.graphics.newImage('assets/Backgrounds/GradientFifteen.png')
-    }
-    inbetweens = {
-        love.graphics.newImage('assets/Backgrounds/InbetweenOne.png'),
-        love.graphics.newImage('assets/Backgrounds/InbetweenTwo.png'),
-        love.graphics.newImage('assets/Backgrounds/InbetweenThree.png'),
-        love.graphics.newImage('assets/Backgrounds/InbetweenFour.png'),
-        love.graphics.newImage('assets/Backgrounds/InbetweenFive.png'),
-        love.graphics.newImage('assets/Backgrounds/InbetweenSix.png'),
-        love.graphics.newImage('assets/Backgrounds/InbetweenSeven.png'),
-        love.graphics.newImage('assets/Backgrounds/InbetweenEight.png'),
-        love.graphics.newImage('assets/Backgrounds/InbetweenNine.png'),
-        love.graphics.newImage('assets/Backgrounds/InbetweenTen.png'),
-        love.graphics.newImage('assets/Backgrounds/InbetweenEleven.png'),
-        love.graphics.newImage('assets/Backgrounds/InbetweenTwelve.png'),
-        love.graphics.newImage('assets/Backgrounds/InbetweenThirteen.png'),
-        love.graphics.newImage('assets/Backgrounds/InbetweenFourteen.png')
-    }
-    --TODO pick constants here to decide
-    --what the level's target color is
-    levelcolors = {
-        {r = 100, g = 0, b = 100, fixed = g}, --purple
-        {r = 0, g = 0, b = 80, fixed = g}, --dark blue
-        {r = 255, g = 255, b = 150, fixed = r}, --light blue
-        {r = 255, g = 200, b = 255, fixed = r}, --green
-        {r = 255, g = 0, b = 0, fixed = b}, --red
-        {r = 255, g = 255, b = 255, fixed = b}, --yellow
-        {r = 255, g = 100, b = 0, fixed = b}, --orange
-        {r = 255, g = 255, b = 255, fixed = g}, --pink
-        {r = 255, g = 0, b = 255, fixed = b}, --red
-        {r = 255, g = 255, b = 255, fixed = b}, --orange
-        {r = 255, g = 255, b = 0, fixed = b}, --yellow?
-        {r = 0, g = 255, b = 255, fixed = r}, --green
-        {r = 255, g = 255, b = 255, fixed = r}, --blue
-        {r = 255, g = 255, b = 255, fixed = g}, --purple?
-        {r = 255, g = 255, b = 255, fixed = g}--pink?
-    }
+
     
     game.progress()
     
@@ -118,13 +71,13 @@ function game.load()
 end
 
 function game.progress()
-    levelct = levelct + 1
-    screen = screens[levelct]
-    inbetween = inbetweens[levelct]
+    level.progress(levels)
+    screen = level.screen(levels)
+    inbetween = level.inbetween(levels)
     --this is going to switch between the screens and
     --inbetweens after we switch to a new level
     currentbg = screen
-    targetcolor = butt.getcolor(levelct)
+    targetcolor = level.getcolor(levels)
 end
 
 function game.credits()
@@ -187,24 +140,14 @@ function game.update(dt)
         ww = love.graphics.getWidth()
         wh = love.graphics.getHeight()
         
-        --this is for things relating to the currently held vectors
-        --Changes color based on mouse position.
-        --TODO: Right now, any line will always create the same color when the mouse is in the same position on the screen.
-        --WANT to make an offset per-button per-level that 'shifts' the location of colors for that line.
-        --FOR EXAMPLE: White is always at the max width and height. We can change the position of white to a different location, which will shift where the line needs to be placed for the color to work.
-        
-        -- v = cvects['color']
-        -- cc = cvects['colorcenter']
-        -- if v and cc then
-        --     cx, cy = cc.x, cc.y
-        --     v.r = (((mx + cx) % 255) / 255)
-        --     v.b = (((my + cy) % 255) / 255)
-        --     v.g = 0 / 255 -- (my-mx/255)
-        -- end
+        --this updates the color of the currently held vectors 
+        --based on mouse position and level constants
+        game.updatecolor(mx,my)
+
     end
 end
 
-function game.draw()
+function game.draw(debuglines)
     if mode.title then
         love.graphics.draw(title, 0, 0)
     elseif mode.win then
@@ -230,9 +173,12 @@ function game.draw()
         -- Draw lines for vects array
         for i, vgrp in pairs(avects) do
             -- vgrp corresponds to a previous cvects (avects is saved current vector tables that include a color)
-            love.graphics.setColor(vgrp.vs['color'].r, vgrp.vs['color'].g,
-                vgrp.vs['color'].b, vgrp.vs['color'].a)
-            
+            if vgrp.vs.color then
+                love.graphics.setColor(vgrp.vs['color'].r, 
+                    vgrp.vs['color'].g,
+                    vgrp.vs['color'].b, 
+                    vgrp.vs['color'].a)
+            end
             for i, v in pairs(vgrp.vs) do
                 if i ~= 'color' and i ~= 'colorcenter' then
                     love.graphics.line(vgrp.x, vgrp.y, v.x + vgrp.x, v.y + vgrp.y)
@@ -266,13 +212,12 @@ function game.draw()
             228,
             228)
         
-        --journal
-        for i, button in pairs(buttons) do
-            if not button.dropped then
+            for i, button in pairs(buttons) do
+                if not button.dropped then
                 if button.pressed then
                     love.graphics.draw(button.spritep,
-                        button.x,
-                        button.y)
+                    button.x,
+                    button.y)
                     love.graphics.setColor(0, 0, 255)
                     love.graphics.setColor(255, 255, 255)
                 else
@@ -280,14 +225,14 @@ function game.draw()
                     love.graphics.draw(button.sprite, button.x, button.y)
                     love.graphics.setColor(0, 0, 255)
                     love.graphics.print(i,
-                        button.x,
-                        button.y)
+                    button.x,
+                    button.y)
                     love.graphics.setColor(255, 255, 255)
                 end
-            
             end
         end
         
+        --journal
         if mode.display then
             deffont = love.graphics.getFont()
             love.graphics.draw(display, 0, 0)
@@ -299,13 +244,30 @@ function game.draw()
                 love.graphics.print(matrix.currenttext.item, 10, 130, 0, 0.2, 0.2)
             end
             love.graphics.setFont(deffont)
-        
         end
-    
     end
+    
     if DEBUG then
-        love.graphics.setColor(targetcolor.r / 255, targetcolor.g / 255, targetcolor.b / 255)
+        tc=level.getcolor(levels)
+        love.graphics.setColor(tc.r, 
+        tc.g, 
+        tc.b,
+        tc.a)
         love.graphics.rectangle('fill', 2, 2, 8, 8)
+        debuglines[6] = ' target for square r=' .. tc.r .. ' g=' .. tc.g .. ' b=' .. tc.b
+        
+        if cvects.color then
+            fixcolor = tc.fixed        
+            cc = cvects.colorcenter
+            tx,ty=tc.cx,tc.cy
+            cx = math.abs(cc.x - mx)/res.x
+            cy = math.abs(cc.y - my)/res.y
+            
+            debuglines[5] = 'r=' .. cvects['color'].r .. ' g=' .. cvects['color'].g .. ' b=' .. cvects['color'].b
+            debuglines[4] = 'cc location '..cc.x..', '..cc.y
+            debuglines[3] = 'shift values '..cx..', '..cy
+            debuglines[2] = 'releasecounter ' .. releasecounter
+        end
     end
     
     love.graphics.setColor(255, 255, 255)
@@ -377,19 +339,52 @@ end
 
 function game.createvectors(button)
     mag = 400
-    coords = butt.getcenter(button.label)
+    coords = level.getcenter(levels,button.label)
     if not cvects.colorcenter then
         cvects.colorcenter = {}
     end
-    cvects.colorcenter.x = button.colorcenter.x
-    cvects.colorcenter.y = button.colorcenter.y
+    cvects.colorcenter.x = coords.x
+    cvects.colorcenter.y = coords.y
     
-    cvects.color = butt.getcolor(button.label)
+
     for i, v in pairs(button.vectors) do
         table.insert(cvects, mag * v)
     end
     -- love.mouse.setVisible(false)
     sounds.playmore()
+end
+
+function game.updatecolor(mx,my)
+    --this indicates the color that should be displayed at the color center
+    target = level.getcolor(levels)
+    --this is for things relating to the currently held vectors
+    --Changes color based on mouse position.
+    -- offset per-button per-level that 'shifts' the location of colors for that line towards a target.
+    --FOR EXAMPLE: White is always at the max width and height. We can change the position of white to a different location, which will shift where the line needs to be placed for the color to work.
+    
+    --these coordinates were saved to the collection based on the pressed button when the vectors were created
+    cc = cvects.colorcenter
+    if cvects.color and cc then
+        -- at (color center (scaled to window coordinates) - mouse position=0), we want to set color to the level target.
+        -- The correct function is as follows: 
+        -- normalize each value to a number between 0 and 1, subtract one from the other, 
+        -- then subtract the absolute value of this number from target color.
+        -- color center is initially defined by row/column, and then scaled to play area coordinates
+        -- mouse position is already at play area coordinates
+        cx = math.abs(cc.x - mx)/200
+        cy = math.abs(cc.y - my)/200
+        
+        if target.fixed == 'r' then 
+            cvects.color.g = target.g - cx
+            cvects.color.b = (target.b - cy)
+        elseif target.fixed == 'g' then
+            cvects.color.r = (target.r - cx)
+            cvects.color.b = target.b - cy
+        elseif target.fixed == 'b' then
+            cvects.color.r = target.r - cy
+            cvects.color.g = (target.g - cx)
+        end
+    end
 end
 
 function game.buttonclicked(argx, argy, button, istouch, presses)
@@ -453,14 +448,17 @@ function game.placevectors(argx, argy)
         game.reset()
     else
         locked = false
-        --insert the vector and
+        --insert the vector and re-init cvects
         table.insert(avects, vgrp)
+        love.mouse.setVisible(true)
+        -- cvects = {}
         if cvects.colorcenter then
+            --retain old colorcenter
             cvects = {colorcenter = {x = cvects.colorcenter.x, y = cvects.colorcenter.y}}
         else
+            --init new color center
             cvects = {colorcenter = {x = 0, y = 0}}
         end
-        love.mouse.setVisible(true)
         
         --if you have made it this far and all the lines have been placed, then we go to the next stage
         --NOTE: Do we want to do this here?
@@ -575,6 +573,7 @@ function love.mousepressed(argx, argy, button, istouch, presses)
 end
 
 function love.mousereleased(argx, argy, button, istouch, presses)
+    releasecounter=releasecounter+1
     -- Add current mouse position to vects array
     argx, argy = love.mouse.getPosition()
     
@@ -585,14 +584,9 @@ function love.mousereleased(argx, argy, button, istouch, presses)
             love.audio.play(button.clicku)
             if button.pressed then
                 
-                cvects.color = button.color
-                if cvects.colorcenter then
-                    cvects.colorcenter.x = button.colorcenter.x
-                    cvects.colorcenter.y = button.colorcenter.y
-                else
-                    --should be center of screen? random?
-                    cvects.colorcenter = {x = 100, y = 100}
-                end
+                c = level.getcolor(levels)
+                cvects.color = {r=c.r,g=c.g,b=c.b,a=c.a}
+                cvects.colorcenter = level.getcenter(levels,button.label)
             end
         end
     end

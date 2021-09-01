@@ -1,13 +1,12 @@
 --TODO needs to be made into a button type rather than a table of values
 local vector = require 'lib.vector'
-local leveldata = require 'src.levels'
 math.randomseed(os.time())-- so that the results of random are always different
 butt = {}
 dropcounter = 1
 droporder = {'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'}
 restorecounter = 1
 restoreorder = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}
-levelcounter = 1
+
 
 function butt.alldown(bs)
     r = true
@@ -28,7 +27,6 @@ function butt.restore(bs, i)
 end
 
 function butt.progress(bs)
-    levelcounter = levelcounter+1
     if dropcounter <= 7 then
         butt.drop(bs, droporder[dropcounter])
         dropcounter = dropcounter + 1
@@ -41,17 +39,7 @@ function butt.progress(bs)
     end
 end
 
-function butt.getcenter(buttonname)
-    colorcenter = leveldata[levelcounter][buttonname]
-    coords={
-        y=(colorcenter.r * leveldata.scale)+leveldata.offset,
-        x=(colorcenter.c * leveldata.scale)+leveldata.offset
-    }
-end
 
-function butt.getcolor(i)
-    return leveldata[i].color
-end
 
 return {
     a = {
