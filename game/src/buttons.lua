@@ -5,7 +5,8 @@ butt = {}
 dropcounter = 1
 droporder = {'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'}
 restorecounter = 1
-restoreorder = {'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'}
+restoreorder = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}
+
 
 function butt.alldown(bs)
     r = true
@@ -36,12 +37,13 @@ function butt.progress(bs)
         print('win!')
         return 'win'
     end
-
 end
+
 
 
 return {
     a = {
+        label='a',
         x = 32,
         y = 2,
         sprite = love.graphics.newImage('assets/sprites/ButtonOne.png'),
@@ -63,6 +65,7 @@ return {
         colorcenter = {x=40,y=40}
     },
     b = {
+        label='b',
         x = 57,
         y = 2,
         sprite = love.graphics.newImage('assets/sprites/ButtonTwo.png'),
@@ -74,8 +77,8 @@ return {
         down = false,
         dropped = false,
         vectors = {
-            vector.fromAngle(math.pi / 4),
-            vector.fromAngle((math.pi / 4) - math.pi)
+            vector.fromAngle(math.pi / 2),
+            vector.fromAngle((math.pi / 2) - math.pi)
         },
         color = {r = 1,
         g = 0,
@@ -85,6 +88,7 @@ return {
         colorcenter = vector(40, 80)
     },
     c = {
+        label='c',
         x = 2,
         y = 60,
         sprite = love.graphics.newImage('assets/sprites/ButtonThree.png'),
@@ -107,56 +111,13 @@ return {
         colorcenter = vector(80, 80)
     },
     d = {
+        label='d',
         x = 2,
         y = 85,
         sprite = love.graphics.newImage('assets/sprites/ButtonFour.png'),
         spritep = love.graphics.newImage('assets/sprites/ButtonFourPressed.png'),
         clickd = love.audio.newSource('assets/sounds/sfx_on4.ogg', 'stream'),
         clicku = love.audio.newSource('assets/sounds/sfx_off4.ogg', 'stream'),
-        shine = false,
-        pressed = false,
-        down = false,
-        dropped = false,
-        vectors = {
-            vector.fromAngle((3 * math.pi / 4)),
-            vector.fromAngle((3 * math.pi / 4) - math.pi)
-        },
-        color = {r = 1,
-        g = 0,
-        b = 1,
-        a = 1},
-        
-        colorcenter = vector(120, 80)
-    },
-    e = {
-        x = 228,
-        y = 165,
-        sprite = love.graphics.newImage('assets/sprites/ButtonFive.png'),
-        spritep = love.graphics.newImage('assets/sprites/ButtonFivePressed.png'),
-        clickd = love.audio.newSource('assets/sounds/sfx_on5.ogg', 'stream'),
-        clicku = love.audio.newSource('assets/sounds/sfx_off5.ogg', 'stream'),
-        shine = false,
-        pressed = false,
-        down = false,
-        dropped = false,
-        vectors = {
-            vector.fromAngle((3 * math.pi / 4)),
-            vector.fromAngle((3 * math.pi / 4) - math.pi)
-        },
-        color = {r = 1,
-        g = 0,
-        b = 1,
-        a = 1},
-        
-        colorcenter = vector(200, 200)
-    },
-    f = {
-        x = 228,
-        y = 190,
-        sprite = love.graphics.newImage('assets/sprites/ButtonSix.png'),
-        spritep = love.graphics.newImage('assets/sprites/ButtonSixPressed.png'),
-        clickd = love.audio.newSource('assets/sounds/sfx_on6.ogg', 'stream'),
-        clicku = love.audio.newSource('assets/sounds/sfx_off6.ogg', 'stream'),
         shine = false,
         pressed = false,
         down = false,
@@ -170,9 +131,56 @@ return {
         b = 1,
         a = 1},
         
+        colorcenter = vector(120, 80)
+    },
+    e = {
+        label='e',
+        x = 228,
+        y = 165,
+        sprite = love.graphics.newImage('assets/sprites/ButtonFive.png'),
+        spritep = love.graphics.newImage('assets/sprites/ButtonFivePressed.png'),
+        clickd = love.audio.newSource('assets/sounds/sfx_on5.ogg', 'stream'),
+        clicku = love.audio.newSource('assets/sounds/sfx_off5.ogg', 'stream'),
+        shine = false,
+        pressed = false,
+        down = false,
+        dropped = false,
+        vectors = {
+            vector.fromAngle(math.pi / 4),
+            vector.fromAngle((math.pi / 4) - math.pi)
+        },
+        color = {r = 1,
+        g = 0,
+        b = 1,
+        a = 1},
+        
+        colorcenter = vector(200, 200)
+    },
+    f = {
+        label='f',
+        x = 228,
+        y = 190,
+        sprite = love.graphics.newImage('assets/sprites/ButtonSix.png'),
+        spritep = love.graphics.newImage('assets/sprites/ButtonSixPressed.png'),
+        clickd = love.audio.newSource('assets/sounds/sfx_on6.ogg', 'stream'),
+        clicku = love.audio.newSource('assets/sounds/sfx_off6.ogg', 'stream'),
+        shine = false,
+        pressed = false,
+        down = false,
+        dropped = false,
+        vectors = {
+            vector.fromAngle(math.pi / 4),
+            vector.fromAngle((math.pi / 4) - math.pi)
+        },
+        color = {r = 1,
+        g = 0,
+        b = 1,
+        a = 1},
+        
         colorcenter = vector(200, 80)
     },
     g = {
+        label='g',
         x = 43,
         y = 228,
         sprite = love.graphics.newImage('assets/sprites/ButtonSeven.png'),
@@ -184,8 +192,8 @@ return {
         down = false,
         dropped = false,
         vectors = {
-            vector.fromAngle(math.pi / 2),
-            vector.fromAngle((math.pi / 2) - math.pi)
+            vector.fromAngle((3 * math.pi / 4)),
+            vector.fromAngle((3 * math.pi / 4) - math.pi)
         },
         color = {r = 1,
         g = 0,
@@ -195,6 +203,7 @@ return {
         colorcenter = vector(100, 200)
     },
     h = {
+        label='h',
         x = 75,
         y = 228,
         sprite = love.graphics.newImage('assets/sprites/ButtonEight.png'),
@@ -206,8 +215,8 @@ return {
         down = false,
         dropped = false,
         vectors = {
-            vector.fromAngle((math.pi / 4)),
-            vector.fromAngle((math.pi / 4) - math.pi)
+            vector.fromAngle((3 * math.pi / 4)),
+            vector.fromAngle((3 * math.pi / 4) - math.pi)
         },
         color = {r = 1,
         g = 0,

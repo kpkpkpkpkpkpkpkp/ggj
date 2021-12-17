@@ -11,10 +11,21 @@ local levels = require 'src.levels'
 releasecounter = 0
 game = {}
 mode = {play = false, 
-        display = false, 
+        display = false,
+        settings = false, 
         win = false, 
         title = true}
 
+settings = {
+    volume = 0.5,
+    muted = false,
+    fullscreen = false
+    
+}
+
+starttext = {x=106,y=143,w=138,h=153}
+
+currsoundbutton = nil
 bg = {x = 0, y = 0}
 scrollspeed = 1
 
@@ -37,8 +48,8 @@ holding = false
 lastbutton = nil
 
 function game.load()
-    -- love.audio.setVolume(0.5)
-    love.audio.setVolume(0)
+    love.audio.setVolume(settings.volume)
+    --love.audio.setVolume(0)
     cur = love.mouse.getSystemCursor("hand")
     love.mouse.setCursor(cur)
     
@@ -48,15 +59,24 @@ function game.load()
     -- collider = HC.new()
     bgcanvas = love.graphics.newCanvas(bgwidth, res.x)
     border = love.graphics.newImage('assets/Screen.png')
-    title = love.graphics.newImage('assets/sprites/TitleScreenWMNMachine.png')
+    title = love.graphics.newImage('assets/sprites/TitleScreenWMNMachineStart.png')
     
     dispbutton = love.graphics.newImage('assets/sprites/ButtonDisplay.png')
+    soundbutton = love.graphics.newImage('assets/sprites/ButtonSound.png')
+    mutebutton = love.graphics.newImage('assets/sprites/ButtonMute.png')
+    refreshbutton = love.graphics.newImage('assets/sprites/ButtonRefresh.png')
+    settbutton = love.graphics.newImage('assets/sprites/ButtonSettings.png')
     display1 = love.graphics.newImage('assets/sprites/FullDisplayFile1.png')
     display2 = love.graphics.newImage('assets/sprites/FullDisplayFile2.png')
     display = display2
     displayct = 0
     
-
+    disparea = {x = 228, y = 228, w = 228 + 16, h = 228 + 16}
+    soundarea = {x = 210, y = 228, w = 210 + 16, h = 228 + 16}
+    settarea = {x = 192, y = 228, w = 192 + 16, h = 228 + 16}
+    refresharea = {x = 174, y = 228, w = 174 + 16, h = 228 + 16}
+    
+    currsoundbutton = soundbutton
     
     game.progress()
     
@@ -104,6 +124,21 @@ function game.addintersects(points, shape, x, y, dx, dy)
         table.insert(points, {p1 = ix, p2 = iy})
     end
     return shape:intersectsRay(x, y, dx, dy)
+end
+
+function game.checkcolor(x,y)
+    -- x,y is vector origin (usually mouse position)
+    
+    cc = cvects.colorcenter
+    circle=HC.circle(cc.x, cc.y, 8)
+
+    for k, v in pairs(cvects) do
+        if k ~= 'color' and k ~= 'colorcenters' then
+            --if either intersects, then return true.
+            if circle:intersectsRay(x, y, v.x, v.y) then return true 
+            end
+        end
+    end
 end
 
 function game.update(dt)
@@ -182,6 +217,7 @@ function game.draw(debuglines)
             for i, v in pairs(vgrp.vs) do
                 if i ~= 'color' and i ~= 'colorcenter' then
                     love.graphics.line(vgrp.x, vgrp.y, v.x + vgrp.x, v.y + vgrp.y)
+
                 end
             end
         end
@@ -209,9 +245,18 @@ function game.draw(debuglines)
         
         -- disparea = {x = 228, y = 228, w = 228 + 16, h = 228 + 16}
         love.graphics.draw(dispbutton,
-            228,
-            228)
-        
+            disparea.x,
+            disparea.y)
+        love.graphics.draw(currsoundbutton,
+            soundarea.x,
+            soundarea.y)
+        love.graphics.draw(settbutton,
+            settarea.x,
+            settarea.y)
+        love.graphics.draw(refreshbutton,
+            refresharea.x,
+            refresharea.y)
+
             for i, button in pairs(buttons) do
                 if not button.dropped then
                 if button.pressed then
@@ -245,6 +290,16 @@ function game.draw(debuglines)
             end
             love.graphics.setFont(deffont)
         end
+
+        if mode.settings then
+            deffont = love.graphics.getFont()
+            love.graphics.draw(display, 0, 0)
+            
+            love.graphics.setFont(font)
+            love.graphics.setColor(0, 0, 255, 255)
+            love.graphics.print('settings menu', 10, 10, 0, 0.2, 0.2)
+            love.graphics.setFont(deffont)
+        end
     end
     
     if DEBUG then
@@ -259,6 +314,8 @@ function game.draw(debuglines)
         if cvects.color then
             fixcolor = tc.fixed        
             cc = cvects.colorcenter
+            love.graphics.circle('fill', cc.x, cc.y, 8)
+            
             tx,ty=tc.cx,tc.cy
             cx = math.abs(cc.x - mx)/res.x
             cy = math.abs(cc.y - my)/res.y
@@ -267,7 +324,18 @@ function game.draw(debuglines)
             debuglines[4] = 'cc location '..cc.x..', '..cc.y
             debuglines[3] = 'shift values '..cx..', '..cy
             debuglines[2] = 'releasecounter ' .. releasecounter
+
         end
+
+        -- for i, v in pairs(cvects) do
+        --     if i ~= 'color' and i ~= 'colorcenter' and game.checkcolor(mx,my) then
+        --         -- these vectors extend from the cursor. create a cursor vector and add the two to get final position.
+        --         vx, vy = v:unpack()
+        --         love.graphics.setLineWidth(2)
+        --         love.graphics.line(mx, my, vx + mx, vy + my)
+        --         love.graphics.setLineWidth(1)
+        --     end
+        -- end
     end
     
     love.graphics.setColor(255, 255, 255)
@@ -281,9 +349,7 @@ end
 
 function game.reset()
     
-    avects = {}
     cvects = {}-- initial shape
-    ashapes = {shape}-- initial shape
     for i, t in pairs(matrix.tiles) do
         t.focus = false
         t.selected = false
@@ -292,10 +358,16 @@ function game.reset()
         button.down = false
         button.pressed = false
     end
-    sounds.playnone()
+
+    sounds.playless()
     love.mouse.setVisible(true)
     locked = false
     colorsset = false
+
+    sounds.playnone()
+    avects = {}
+    ashapes = {shape}-- initial shape
+    
 end
 
 function game.colorsmatch(colo1, colo2, tolerance)
@@ -357,6 +429,15 @@ end
 function game.updatecolor(mx,my)
     --this indicates the color that should be displayed at the color center
     target = level.getcolor(levels)
+
+    --init to some default value (doesn't matter which)
+    orientation=Orientation.VERTICAL
+
+    if lastbutton then
+        --set to correct orientation once a button has been pressed
+        orientation = level.getor(levels,lastbutton.label)
+    end
+    
     --this is for things relating to the currently held vectors
     --Changes color based on mouse position.
     -- offset per-button per-level that 'shifts' the location of colors for that line towards a target.
@@ -365,43 +446,121 @@ function game.updatecolor(mx,my)
     --these coordinates were saved to the collection based on the pressed button when the vectors were created
     cc = cvects.colorcenter
     if cvects.color and cc then
+
         -- at (color center (scaled to window coordinates) - mouse position=0), we want to set color to the level target.
+        -- The color should shift along the axis perpendicular to the current vector. This is tracked via an orientation value defined for the button.
         -- The correct function is as follows: 
-        -- normalize each value to a number between 0 and 1, subtract one from the other, 
-        -- then subtract the absolute value of this number from target color.
+        -- normalize each value to a number between 0 and 1
+        -- find the gradiant of the color by performing a different operation based on the current orientation.
+        -- then subtract the absolute value of this gradient from target color.
+        
         -- color center is initially defined by row/column, and then scaled to play area coordinates
         -- mouse position is already at play area coordinates
-        cx = math.abs(cc.x - mx)/200
-        cy = math.abs(cc.y - my)/200
+
+        grad=0
+        w=200
+        h=200
+        cx=cc.x-mx
+        cy=cc.y-my
+
+        if orientation == Orientation.VERTICAL then
+            grad = cx/w
+        elseif orientation == Orientation.HORIZONTAL then
+            grad = cy/h
+        elseif orientation == Orientation.DIAG_DEC then
+            grad = (cy - cx)/(w+h)
+        elseif orientation == Orientation.DIAG_ASC then
+            grad = (cx + cy)/(w+h)
+            -- grad = (absx * (h-absy)) /(w*h)
+        end
+        
+        debuglines[7] = 'gradient val '..grad
+
+
+        -- cx = math.abs(cc.x - mx)/200
+        -- cy = math.abs(cc.y - my)/200
         
         if target.fixed == 'r' then 
-            cvects.color.g = target.g - cx
-            cvects.color.b = (target.b - cy)
+            cvects.color.g = math.abs(target.g - grad)
+            cvects.color.b = math.abs(target.b - grad)
         elseif target.fixed == 'g' then
-            cvects.color.r = (target.r - cx)
-            cvects.color.b = target.b - cy
+            cvects.color.r = math.abs(target.r - grad)
+            cvects.color.b = math.abs(target.b - grad)
         elseif target.fixed == 'b' then
-            cvects.color.r = target.r - cy
-            cvects.color.g = (target.g - cx)
+            cvects.color.r = math.abs(target.r - grad)
+            cvects.color.g = math.abs(target.g - grad)
         end
     end
+end
+
+function game.stepcolor(r,g,b,max,min)
+    if r==max then
+        if b > min then b = b-1
+        elseif g < max then g=g+1 end
+    end
+
+    if g==max then
+        if r > min then r = r-1
+        elseif b < max then b=b+1 end
+    end
+
+    if b==max then
+        if g > min then g = g-1
+        elseif r < max then r=r+1 end
+    end
+    return r,g,b
 end
 
 function game.buttonclicked(argx, argy, button, istouch, presses)
     local lastbutton = nil
     local wasbutton = false
     --button section
-    if mode.display then
+    if mode.display or mode.settings then
         --close display button
         cdisparea = {x = 219, y = 14, w = 232, h = 27}
-        if mode.display and argx > cdisparea.x and argx < cdisparea.w and
+        if mode.display or mode.settings and argx > cdisparea.x and argx < cdisparea.w and
             argy > cdisparea.y and argy < cdisparea.h then
             mode.display = false
+            mode.settings = false
+        end
+
+        if mode.settings then
+
+
+
+
         end
     elseif mode.play then
         --open display button
         --todo fix journal buttons
-        disparea = {x = 228, y = 228, w = 228 + 16, h = 228 + 16}
+        
+        if argx > soundarea.x and argx < soundarea.w and
+            argy > soundarea.y and argy < soundarea.h then
+                -- mute/unmute
+            
+            settings.muted = not settings.muted
+            
+            if settings.muted then 
+                currsoundbutton = mutebutton 
+                love.audio.setVolume(0)
+            else 
+                currsoundbutton = soundbutton
+                love.audio.setVolume(settings.volume)
+            end
+        end
+
+        if argx > settarea.x and argx < settarea.w and
+            argy > settarea.y and argy < settarea.h then
+            --pause and show settings
+            mode.settings = true
+        end
+
+        if argx > refresharea.x and argx < refresharea.w and
+            argy > refresharea.y and argy < refresharea.h then
+            --clear vectors and buttons
+            game.reset()
+        end
+
         if not mode.display and argx > disparea.x and argx < disparea.w and
             argy > disparea.y and argy < disparea.h then
             --pause and show journal
@@ -435,18 +594,24 @@ function game.buttonclicked(argx, argy, button, istouch, presses)
 end
 
 function game.placevectors(argx, argy)
-    --cloning current vectors into placed vectors
-    vgrp = {
-        x = argx,
-        y = argy,
-        -- this needs to be deep copy
-        vs = cvects
-    }
     
-    --go through avects and verify whether they're all the same color
-    if not game.colorsmatch(targetcolor, vgrp.vs.color, 100) then
+    
+    --go through avects and verify whether they're all the same color     
+    cc = cvects.colorcenter
+
+    --instead of argx/argy, check whether cvects intersects cc area
+    -- if not (argx > cc.x - 8 and argx < cc.x + 8 and argy > cc.y - 8 and argy < cc.y + 8) then
+    if not game.checkcolor(argx,argy) then
+        -- drop the current vector (don't reset everything)
         game.reset()
     else
+        --cloning current vectors into placed vectors
+        vgrp = {
+            x = argx,
+            y = argy,
+            -- this needs to be deep copy
+            vs = cvects
+        }
         locked = false
         --insert the vector and re-init cvects
         table.insert(avects, vgrp)
@@ -534,7 +699,8 @@ end
 function love.mousepressed(argx, argy, button, istouch, presses)
     --this converts to scaled position
     argx, argy = love.mouse.getPosition()
-    if mode.title then
+    if mode.title and argx > starttext.x and argx < starttext.w and
+    argy > starttext.y and argy < starttext.h then
         game.startgame()
     else
         --init check for button press

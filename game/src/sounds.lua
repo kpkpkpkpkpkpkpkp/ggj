@@ -1,5 +1,10 @@
 sounds = {}
 function sounds.load()
+    openingbg = love.audio.newSource('assets/sounds/old/20210127_mysterious_tune.mp3', 'stream')
+    openingbg:setLooping(true)
+    endingbg = love.audio.newSource('assets/sounds/credits.ogg', 'stream')
+    endingbg:setLooping(true)
+
     playing = 0
     layers = {
         love.audio.newSource(

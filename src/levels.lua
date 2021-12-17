@@ -1,4 +1,11 @@
 level={}
+Orientation={
+    VERTICAL=1,
+    HORIZONTAL=2,
+    DIAG_ASC=3,
+    DIAG_DEC=4
+}
+
 
 function level.progress(lv) 
     if lv.counter > 15 then
@@ -13,6 +20,11 @@ function level.getcenter(lv,buttonlabel)
         y=(colorcenter.r * lv.scale)+lv.offset,
         x=(colorcenter.c * lv.scale)+lv.offset
     }
+end
+
+function level.getor(lv,buttonlabel)
+    colorcenter = lv[lv.counter][buttonlabel]
+    return colorcenter.orien
 end
 
 function level.getcolor(lv)
@@ -50,250 +62,238 @@ return {
     -- rather than at the center intersection of a row/column
     --each vector's possible coordinates alternates between r being r+1/5 and c being c+1/5
 
+    --NOTE: I picked this method of doing a color center when I thought both x and y directions would change the color.
+    --The intended gameplay was that only the direction perpandicular to the vectors changes the color. 
+    --This means that only one of the 'color center' coordinates is important for horizontal and vertical lines.
+    --Both coordinates are needed for diagonals, but the chosen coordinates could be at any point on the correct line placment.
+    --I have kept things this way because it's the easiest way I could think of to still do the line checks. 
+    --As long as the placed line intersects an area around the color center, it will pass the check.
+    --Whatever function is used to set the line's current color must approach the color defined here, and must vary perpendicular to the defined orientation.
 
-    -- levelct = 0,
-    --TODO pick constants here to decide
-    --what the level's target color is
-    -- levelcolors = {
-    --     
 
-    --     {r = 0, g = 0, b = 80, fixed = g}, --dark blue
-    --     {r = 255, g = 255, b = 150, fixed = r}, --light blue
-    --     {r = 255, g = 200, b = 255, fixed = r}, --green
-    --     {r = 255, g = 0, b = 0, fixed = b}, --red
-    --     {r = 255, g = 255, b = 255, fixed = b}, --yellow
-    --     {r = 255, g = 100, b = 0, fixed = b}, --orange
-    --     {r = 255, g = 255, b = 255, fixed = g}, --pink
-    --     {r = 255, g = 0, b = 255, fixed = b}, --red
-    --     {r = 255, g = 255, b = 255, fixed = b}, --orange
-    --     {r = 255, g = 255, b = 0, fixed = b}, --yellow?
-    --     {r = 0, g = 255, b = 255, fixed = r}, --green
-    --     {r = 255, g = 255, b = 255, fixed = r}, --blue
-    --     {r = 255, g = 255, b = 255, fixed = g}, --purple?
-    --     {r = 255, g = 255, b = 255, fixed = g}--pink?
-    -- }
+    --due to the new method of shifting current color, it may be better to define RGB in 0<n<255 than 0<n<1?
 
     {
         --purple
-        color = {r = 0.7,
-        g = 0.2,
+        color = {r = 0.87,
+        g = 0.60,
         b = 1,
         a = 1,
         fixed = 'g',
         cx=r,
         cy=b},
-        a={r=6,c=2},   --vert, col is irrelevant  
-        b={r=6,c=4},   --vert, col is irrelevant
-        c={r=1,c=1},   --horiz, row is irrelevant
-        d={r=4,c=4},   --horiz, row is irrelevant
-        e={r=3,c=0.5}, --diag +30deg
-        f={r=1.5,c=6}, --diag +30deg
-        g={r=4,c=6.5}, --diag -30deg
-        h={r=5,c=2.5}  --diag -30deg
+        a={r=6,c=2,orien=Orientation.VERTICAL},   --vert, col is irrelevant  
+        b={r=6,c=4,orien=Orientation.VERTICAL},   --vert, col is irrelevant
+        c={r=1,c=1,orien=Orientation.HORIZONTAL},   --horiz, row is irrelevant
+        d={r=4,c=4,orien=Orientation.HORIZONTAL},   --horiz, row is irrelevant
+        e={r=3,c=0.5,orien=Orientation.DIAG_ASC}, --diag +30deg
+        f={r=1.5,c=6,orien=Orientation.DIAG_ASC}, --diag +30deg
+        g={r=4,c=6.5,orien=Orientation.DIAG_DEC}, --diag -30deg
+        h={r=5,c=2.5,orien=Orientation.DIAG_DEC}  --diag -30deg
     },
     {
         --dark blue
-        color = {r = 0.7,
-        g = 0.7,
-        b = 1,
+        color = {r = 0,
+        g = 0,
+        b = 0.60,
         a = 1,
         fixed = 'r',
         cx=b,
         cy=g},
-        a={r=7,c=2}, --vert, col is irrelevant  
-        b={r=6,c=4}, --vert, col is irrelevant
-        c={r=1,c=1}, --horiz, row is irrelevant
-        d={r=1,c=3}, --horiz, row is irrelevant
-        e={r=2,c=5.5}, --diag +30deg
-        f={r=5.5,c=5}, --diag +30deg
-        g={r=1,c=7.5}  --diag -30deg
+        a={r=7,c=2,orien=Orientation.VERTICAL}, --vert, col is irrelevant  
+        b={r=6,c=4,orien=Orientation.VERTICAL}, --vert, col is irrelevant
+        c={r=1,c=1,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
+        d={r=1,c=3,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
+        e={r=2,c=5.5,orien=Orientation.DIAG_ASC}, --diag +30deg
+        f={r=5.5,c=5,orien=Orientation.DIAG_ASC}, --diag +30deg
+        g={r=1,c=7.5,orien=Orientation.DIAG_DEC}  --diag -30deg
     },
     {
         --light blue
-        color = {r = 0,
-        g = 0,
-        b = 0.5,
+        color = {r = 0.50,
+        g = 0.83,
+        b = 1.00,
         a = 1,
         fixed = 'r',
         cx=b,
         cy=g},
-        a={r=1,c=1}, --vert, col is irrelevant 
-        b={r=5,c=7}, --vert, col is irrelevant
-        c={r=0,c=0}, --horiz, row is irrelevant
-        d={r=0,c=0}, --horiz, row is irrelevant
-        e={r=0,c=0}, --diag +30deg
-        f={r=0,c=0} --diag +30deg
+        a={r=0,c=1,orien=Orientation.VERTICAL}, --vert, col is irrelevant 
+        b={r=0,c=6,orien=Orientation.VERTICAL}, --vert, col is irrelevant
+        c={r=1,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
+        d={r=5,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
+        e={r=3,c=0.5,orien=Orientation.DIAG_ASC}, --diag +30deg
+        f={r=8,c=0.5,orien=Orientation.DIAG_ASC}, --diag +30deg
     },
     {
         --green
         color = {r = 0,
-        g = 1,
-        b = 0,
+        g = 0.90,
+        b = 0.45,
         a = 1,
         fixed = 'r',
         cx=g,
         cy=b},
-        a={r=0,c=0},--vert, col is irrelevant 
-        b={r=0,c=0},--vert, col is irrelevant
-        c={r=0,c=0},--horiz, row is irrelevant
-        d={r=0,c=0},--horiz, row is irrelevant
-        e={r=0,c=0} --diag +30deg
+        a={r=0,c=1,orien=Orientation.VERTICAL}, --vert, col is irrelevant 
+        b={r=0,c=7,orien=Orientation.VERTICAL}, --vert, col is irrelevant
+        c={r=4,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
+        d={r=7,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
+        e={r=7.5,c=4,orien=Orientation.DIAG_ASC}, --diag +30deg
     },
     {
         --red
         color = {r = 1,
-        g = 0,
-        b = 0,
+        g = 0.20,
+        b = 0.20,
         a = 1,
         fixed = 'b',
         cx=r,
         cy=g},
-        a={r=0,c=0},--vert, col is irrelevant 
-        b={r=0,c=0},--vert, col is irrelevant
-        c={r=0,c=0},--horiz, row is irrelevant
-        d={r=0,c=0}--horiz, row is irrelevant
+        a={r=0,c=1,orien=Orientation.VERTICAL}, --vert, col is irrelevant 
+        b={r=0,c=5,orien=Orientation.VERTICAL}, --vert, col is irrelevant
+        c={r=1,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
+        d={r=6,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
     },
     {
         --yellow
         color = {r = 1,
         g = 1,
-        b = 1,
+        b = 0.40,
         a = 1,
         fixed = 'b',
         cx=r,
         cy=g},
-        a={r=0,c=0},--vert, col is irrelevant 
-        b={r=0,c=0},--vert, col is irrelevant
-        c={r=0,c=0}--horiz, row is irrelevant
+        a={r=0,c=2,orien=Orientation.VERTICAL}, --vert, col is irrelevant 
+        b={r=0,c=7,orien=Orientation.VERTICAL}, --vert, col is irrelevant
+        c={r=3,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
     },
     {
         --orange
         color = {r = 1,
-        g = 1,
-        b = 0,
+        g = 0.60,
+        b = 0.20,
         a = 1,
         fixed = 'b',
         cx=g,
         cy=r},
-        a={r=0,c=0},--vert, col is irrelevant
-        b={r=0,c=0}--vert, col is irrelevant
+        a={r=0,c=1,orien=Orientation.VERTICAL}, --vert, col is irrelevant 
+        b={r=0,c=7,orien=Orientation.VERTICAL}, --vert, col is irrelevant
     },
     {
         --pink
-        color = {r = 0.5,
-        g = 0,
-        b = 0,
+        color = {r = 1.00,
+        g = 0.70,
+        b = 0.80,
         a = 1,
         fixed = 'g',
         cx=r,
         cy=b},
-        a={r=0,c=0}--vert, col is irrelevant
+        a={r=0,c=4,orien=Orientation.VERTICAL}, --vert, col is irrelevant 
     },
     {
-        --red?
-        color = {r = 1,
+        --red
+        color = {r = 0.90,
         g = 0,
-        b = 0,
+        b = 0.15,
         a = 1,
         fixed = 'b',
         cx=r,
         cy=g},
-        a={r=0,c=0},--vert, col is irrelevant 
-        b={r=0,c=0}--vert, col is irrelevant
+        a={r=0,c=6,orien=Orientation.VERTICAL}, --vert, col is irrelevant 
+        b={r=0,c=8,orien=Orientation.VERTICAL}, --vert, col is irrelevant
     },
     {
-        --orange?
+        --orange
         color = {r = 1,
-        g = 1,
-        b = 0,
+        g = 0.40,
+        b = 0.10,
         a = 1,
         fixed = 'b',
         cx=r,
         cy=g},
-        a={r=0,c=0},--vert, col is irrelevant 
-        b={r=0,c=0},--vert, col is irrelevant
-        c={r=0,c=0}--horiz, row is irrelevant
+        a={r=0,c=2,orien=Orientation.VERTICAL}, --vert, col is irrelevant 
+        b={r=0,c=6,orien=Orientation.VERTICAL}, --vert, col is irrelevant
+        c={r=2,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
     },
     {
         --yellow
         color = {r = 1,
         g = 1,
-        b = 1,
+        b = 0.60,
         a = 1,
         fixed = 'b',
     
         cx=g,
         cy=r},
-        a={r=0,c=0},--vert, col is irrelevant 
-        b={r=0,c=0},--vert, col is irrelevant
-        c={r=0,c=0},--horiz, row is irrelevant
-        d={r=0,c=0} --horiz, row is irrelevant
+        a={r=0,c=0,orien=Orientation.VERTICAL}, --vert, col is irrelevant 
+        b={r=0,c=4,orien=Orientation.VERTICAL}, --vert, col is irrelevant
+        c={r=5,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
+        d={r=8,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
     },
     {
         --green
-        color = {r = 0,
+        color = {r = 0.20,
         g = 1,
-        b = 0,
+        b = 0.60,
         a = 1,
         fixed = 'r',
         cx=g,
         cy=b},
-        a={r=0,c=0},--vert, col is irrelevant 
-        b={r=0,c=0},--vert, col is irrelevant
-        c={r=0,c=0},--horiz, row is irrelevant
-        d={r=0,c=0},--horiz, row is irrelevant
-        e={r=0,c=0} --diag +30deg
+        a={r=0,c=3,orien=Orientation.VERTICAL}, --vert, col is irrelevant 
+        b={r=0,c=7,orien=Orientation.VERTICAL}, --vert, col is irrelevant
+        c={r=0,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
+        d={r=6,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
+        e={r=7.5,c=4,orien=Orientation.DIAG_ASC}, --diag +30deg
     },
     {
         --blue
         color = {r = 0,
-        g = 0,
-        b = 1,
+        g = 0.40,
+        b = 0.80,
         a = 1,
         fixed = 'r',
         cx=g,
         cy=b},
-        a={r=0,c=0},--vert, col is irrelevant 
-        b={r=0,c=0},--vert, col is irrelevant
-        c={r=0,c=0},--horiz, row is irrelevant
-        d={r=0,c=0},--horiz, row is irrelevant
-        e={r=0,c=0},--diag +30deg
-        f={r=0,c=0} --diag +30deg
+        a={r=0,c=0,orien=Orientation.VERTICAL}, --vert, col is irrelevant 
+        b={r=0,c=6,orien=Orientation.VERTICAL}, --vert, col is irrelevant
+        c={r=2,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
+        d={r=7,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
+        e={r=4,c=0.5,orien=Orientation.DIAG_ASC}, --diag +30deg
+        f={r=7.5,c=4,orien=Orientation.DIAG_ASC}, --diag +30deg
     },
     {
         --purple
-        color = {r = 1,
+        color = {r = 0.50,
         g = 0,
         b = 1,
         a = 1,
         fixed = 'g',
         cx=b,
         cy=r},
-        a={r=0,c=0},--vert, col is irrelevant 
-        b={r=0,c=0},--vert, col is irrelevant
-        c={r=0,c=0},--horiz, row is irrelevant
-        d={r=0,c=0},--horiz, row is irrelevant
-        e={r=0,c=0},--diag +30deg
-        f={r=0,c=0},--diag +30deg
-        g={r=0,c=0}--diag -30deg
+        a={r=0,c=2,orien=Orientation.VERTICAL}, --vert, col is irrelevant 
+        b={r=0,c=7,orien=Orientation.VERTICAL}, --vert, col is irrelevant
+        c={r=1,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
+        d={r=6,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
+        e={r=4,c=0.5,orien=Orientation.DIAG_ASC}, --diag +30deg
+        f={r=7.5,c=3,orien=Orientation.DIAG_ASC}, --diag +30deg
+        g={r=0.5,c=5,orien=Orientation.DIAG_DEC}, --diag -30deg
     },
     {
         --pink
-        color = {r = 0.5,
-        g = 0,
-        b = 0,
+        color = {r = 1.00,
+        g = 0.70,
+        b = 1.00,
         a = 1,
         fixed = 'g',
         cx=r,
         cy=b},
-        a={r=0,c=0}, --vert, col is irrelevant 
-        b={r=0,c=0}, --vert, col is irrelevant
-        c={r=0,c=0}, --horiz, row is irrelevant
-        d={r=0,c=0}, --horiz, row is irrelevant
-        e={r=0,c=0}, --diag +30deg
-        f={r=0,c=0}, --diag +30deg
-        g={r=0,c=0}, --diag -30deg
-        h={r=0,c=0}  --diag -30deg
+        a={r=0,c=1,orien=Orientation.VERTICAL}, --vert, col is irrelevant 
+        b={r=0,c=7,orien=Orientation.VERTICAL}, --vert, col is irrelevant
+        c={r=1,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
+        d={r=4,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
+        e={r=2,c=0.5,orien=Orientation.DIAG_ASC}, --diag +30deg
+        f={r=7.5,c=3,orien=Orientation.DIAG_ASC}, --diag +30deg
+        g={r=2,c=0.5,orien=Orientation.DIAG_DEC}, --diag -30deg
+        h={r=0.5,c=5,orien=Orientation.DIAG_DEC}  --diag -30deg
     },
 
     screens = {

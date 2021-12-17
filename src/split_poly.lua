@@ -78,6 +78,7 @@ function getIntersects(shape, x, y, dx, dy)
     -- assert(#outis <= 2, "should only be two intersections")
     return unpack(outis)
 end
+
 -- returns true if three vertices lie on a line
 function areCollinear(p, q, r, eps)
     return math.abs(hcvector.det(q.x - p.x, q.y - p.y, r.x - p.x, r.y - p.y)) <= (eps or 1e-32)
