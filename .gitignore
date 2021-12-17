@@ -1,5 +1,3 @@
-./game/ggj.exe
-./game/assets/*
-./game/assets/sounds/*
-./game/lib/*
-./game/src/*
+game
+SUBMIT
+BACKUP
