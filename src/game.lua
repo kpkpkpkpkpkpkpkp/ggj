@@ -33,9 +33,12 @@ x, y, dx, dy = 0, 0, 300, 140
 ashapes = {}
 
 -- Current vectors tracked by the mouse. Current color of vectors is also included
-cvects = {color = {r = 1, g = 1, b = 1}, colorcenter = {x = 0, y = 0}}
+cvects = {color = {r = 1, g = 1, b = 1, a = 1}, colorcenter = {x = 0, y = 0}}
 dropcount = 0
 droptime = 8
+
+startcredits = false
+creditsdone = false
 
 res = {x = 256, y = 256}
 ibwidth = 720
@@ -49,6 +52,31 @@ dvects = {}
 lock = false
 holding = false
 lastbutton = nil
+
+endtext = [[Entry 389:
+
+
+I saw a rainbow yesterday! 
+it must be the first time in
+ages. Although I've been
+making so much progress
+tuning, there aren't words
+to describe how beautiful
+it is to see colors together
+again in nature.
+
+Even though it seems like
+such a small thing, After 
+all of my work I am starting 
+to feel hopeful that beauty 
+will return to the world, as 
+long as people continue to 
+seek it. 
+
+If anyone reads this, I hope
+you will be inspired to seek
+beauty in nature as well.
+]]
 
 function game.load()
     love.audio.setVolume(settings.volume)
@@ -65,7 +93,7 @@ function game.load()
     -- collider = HC.new()
     bgcanvas = love.graphics.newCanvas(bgwidth, res.x)
     border = love.graphics.newImage('assets/sprites/Screen.png')
-    title = love.graphics.newImage('assets/sprites/TitleScreenWMNMachineStart.png')
+    credits = love.graphics.newImage('assets/sprites/EndAnimation-Sheet-new.png')
     
     dispbutton = love.graphics.newImage('assets/sprites/ButtonDisplay.png')
     soundbutton = love.graphics.newImage('assets/sprites/ButtonSound.png')
@@ -113,6 +141,7 @@ function game.progress()
     --TODO don't like this
     win = butt.progress(buttons)
     if win then
+        sounds.playnone()
         mode.win = true
     else
         screen = level.screen(levels)
@@ -127,7 +156,7 @@ function game.progress()
 end
 
 function game.titleanim()
-    titleanim = love.graphics.newImage('assets/sprites/TitleScreenAnim.png')
+    titleanim = love.graphics.newImage('assets/sprites/TitleScreen.png')
     tquads = {}
     for i = 0, titleanim:getWidth(), 248 do
         table.insert(tquads, love.graphics.newQuad(i, 0, 248, 248, titleanim:getWidth(), titleanim:getHeight()))
@@ -140,14 +169,13 @@ function game.titleanim()
 end
 
 function game.credits()
-    credits = love.graphics.newImage('assets/sprites/EndAnimation-Sheet.png')
     cquads = {}
     for i = 0, credits:getWidth(), 248 do
-        table.insert(cquads, love.graphics.newQuad(i, 0, 248, 744, credits:getWidth(), credits:getHeight()))
+        table.insert(cquads, love.graphics.newQuad(i, 0, 248, 824, credits:getWidth(), credits:getHeight()))
     end
     cquad = cquads[1]
     credct = 1
-    credy = res.y - credits:getHeight()
+    credy = 248 - credits:getHeight()
     speed = 4
     cquadcount = 1
     credscrollspeed = 30
@@ -197,12 +225,17 @@ function game.update(dt)
         love.audio.play(endingbg)
         --credits
         if credy < 0 then
-            credy = credy + (dt * credscrollspeed)
-            credct = credct + (dt * speed)
-            if credct > 1 and #cquads > cquadcount then
-                cquad = cquads[cquadcount]
-                cquadcount = cquadcount + 1
-                credct = 0
+            if startcredits then
+                credy = credy + (dt * credscrollspeed)
+                credct = credct + (dt * speed)
+                if credct > 1 and #cquads > cquadcount then
+                    cquad = cquads[cquadcount]
+                    cquadcount = cquadcount + 1
+                    credct = 0
+                end
+                if #cquads <= cquadcount then
+                    creditsdone = true
+                end
             end
         end
     elseif mode.display then
@@ -218,6 +251,9 @@ function game.update(dt)
             local voldt = (dropcount/droptime)
             dropcount = dropcount - (dt*droptime)
             sounds.changeplayingvolume(voldt)
+            if dropcount <=0 then
+                sounds.playnone()
+            end
         else
             dvects={}
         end
@@ -248,7 +284,13 @@ function game.draw(debuglines)
         --     love.graphics.draw(title, 0, 0)
         -- end
     elseif mode.win then
+
         love.graphics.draw(credits, cquad, 0, credy)
+        --change to text color
+        if not startcredits then
+            love.graphics.setColor(0, 0, 255, 255)
+            love.graphics.print(endtext, 14, credy+(576)+14, 0) --496 will put the text on the lowest part of the sprite
+        end
     else
         love.graphics.draw(screen, bg.x, bg.y)
         love.graphics.draw(screen, bg.x + screen:getWidth(), bg.y)
@@ -308,6 +350,7 @@ function game.draw(debuglines)
                 cvects['color'].b,
                 cvects['color'].a)
         end
+
         for i, v in pairs(cvects) do
             if i ~= 'color' and i ~= 'colorcenter' then
                 -- these vectors extend from the cursor. create a cursor vector and add the two to get final position.
@@ -322,23 +365,18 @@ function game.draw(debuglines)
         love.graphics.draw(border, 0, 0)
         items.drawfound()
         
-        
-        -- disparea = {x = 228, y = 228, w = 228 + 16, h = 228 + 16}
         love.graphics.draw(dispbutton,
             disparea.x,
             disparea.y)
         love.graphics.draw(currsoundbutton,
             soundarea.x,
             soundarea.y)
-        -- love.graphics.draw(settbutton,
-        --     settarea.x,
-        --     settarea.y)
         love.graphics.draw(refreshbutton,
             refresharea.x,
             refresharea.y)
 
-            for i, button in pairs(buttons) do
-                if not button.dropped then
+        for i, button in pairs(buttons) do
+            if not button.dropped then
                 if button.pressed then
                     love.graphics.draw(button.spritep,
                     button.x,
@@ -620,6 +658,7 @@ function game.stepcolorto(r,g,b,min,max,n)
 end
 
 function game.buttonclicked(argx, argy, button, istouch, presses)
+    dropcount=0
     local lastbutton = nil
     local wasbutton = false
     --button section
@@ -812,7 +851,11 @@ function love.mousepressed(argx, argy, button, istouch, presses)
     then
         game.startgame()
     elseif mode.win then
-        game.gototitle()
+        if not startcredits then
+            startcredits=true
+        elseif creditsdone then
+            game.gototitle()
+        end
     else
         --init check for button press
         wasbutton, lastbutton = game.buttonclicked(argx, argy, button, istouch, presses)

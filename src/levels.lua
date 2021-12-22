@@ -107,10 +107,10 @@ return {
         a={r=7,c=2,orien=Orientation.VERTICAL}, --vert, col is irrelevant  
         b={r=6,c=8,orien=Orientation.VERTICAL}, --vert, col is irrelevant
         c={r=2,c=1,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
-        d={r=4,c=1,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
+        d={r=5,c=1,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
         e={r=2,c=5.5,orien=Orientation.DIAG_ASC}, --diag +30deg
         f={r=5.5,c=5,orien=Orientation.DIAG_ASC}, --diag +30deg
-        g={r=1,c=7.5,orien=Orientation.DIAG_DEC}  --diag -30deg
+        g={r=8,c=6,orien=Orientation.DIAG_DEC}  --diag -30deg
     },
     {
         --light blue
@@ -121,8 +121,8 @@ return {
         fixed = 'r',
         cx=b,
         cy=g},
-        a={r=0,c=1,orien=Orientation.VERTICAL}, --vert, col is irrelevant 
-        b={r=0,c=6,orien=Orientation.VERTICAL}, --vert, col is irrelevant
+        a={r=0,c=6,orien=Orientation.VERTICAL}, --vert, col is irrelevant 
+        b={r=0,c=1,orien=Orientation.VERTICAL}, --vert, col is irrelevant
         c={r=1,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
         d={r=5,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
         e={r=3,c=0.5,orien=Orientation.DIAG_ASC}, --diag +30deg
@@ -231,7 +231,7 @@ return {
         a={r=0,c=8,orien=Orientation.VERTICAL}, --vert, col is irrelevant 
         b={r=0,c=4,orien=Orientation.VERTICAL}, --vert, col is irrelevant
         c={r=5,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
-        d={r=8,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
+        d={r=0,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
     },
     {
         --green
@@ -242,11 +242,11 @@ return {
         fixed = 'r',
         cx=g,
         cy=b},
-        a={r=0,c=3,orien=Orientation.VERTICAL}, --vert, col is irrelevant 
+        a={r=0,c=2,orien=Orientation.VERTICAL}, --vert, col is irrelevant 
         b={r=0,c=7,orien=Orientation.VERTICAL}, --vert, col is irrelevant
         c={r=0,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
-        d={r=6,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
-        e={r=7.5,c=4,orien=Orientation.DIAG_ASC}, --diag +30deg
+        d={r=5,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
+        e={r=7.5,c=1,orien=Orientation.DIAG_ASC}, --diag +30deg
     },
     {
         --blue
@@ -262,7 +262,7 @@ return {
         c={r=2,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
         d={r=7,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
         e={r=4,c=0.5,orien=Orientation.DIAG_ASC}, --diag +30deg
-        f={r=7.5,c=4,orien=Orientation.DIAG_ASC}, --diag +30deg
+        f={r=7.5,c=2,orien=Orientation.DIAG_ASC}, --diag +30deg
     },
     {
         --purple
@@ -290,12 +290,12 @@ return {
         fixed = 'g',
         cx=r,
         cy=b},
-        a={r=0,c=1,orien=Orientation.VERTICAL}, --vert, col is irrelevant 
+        a={r=0,c=0,orien=Orientation.VERTICAL}, --vert, col is irrelevant 
         b={r=0,c=7,orien=Orientation.VERTICAL}, --vert, col is irrelevant
         c={r=1,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
-        d={r=4,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
-        e={r=2,c=0.5,orien=Orientation.DIAG_ASC}, --diag +30deg
-        f={r=7.5,c=3,orien=Orientation.DIAG_ASC}, --diag +30deg
+        d={r=6,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
+        e={r=3,c=0.5,orien=Orientation.DIAG_ASC}, --diag +30deg
+        f={r=7.5,c=4,orien=Orientation.DIAG_ASC}, --diag +30deg
         g={r=2,c=0.5,orien=Orientation.DIAG_DEC}, --diag -30deg
         h={r=0.5,c=5,orien=Orientation.DIAG_DEC}  --diag -30deg
     },

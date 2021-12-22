@@ -35,7 +35,7 @@ end
 
 function love.load()
     debuglines = {}
-    love.window.setTitle("Restoration")
+    love.window.setTitle("W.M.N. Machine")
     love.window.setIcon(love.image.newImageData('assets/sprites/frog.png'))
     love.window.setMode((res.x*scale.x)-(8*scale.x), (res.y*scale.y)-(8*scale.y))
     canvas = love.graphics.newCanvas(res.x, res.y)

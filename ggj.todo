@@ -48,28 +48,26 @@ COLORS
     EMBELISH
     ✔ drop button once item has been found, until one button, then increase number of buttons after that. @done(21-01-31 11:18)
     ✔ change gradient BG once a item has been found @done(21-12-16 12:54)
-    ☐ void swallows up tiles and buttons instead of vanishing
-    ✔ dropped lines fade instead of vanishing @done(21-12-22 10:42)
-    
-    ☐ have display slide up and down instead of appearing suddenly
-    ✔ add animation to title @done(21-12-22 09:48)
-
-    ☐ Add sound effects; clicked wrong, clicked right
     ✔ Music fade out and transitions. @done(21-12-22 10:42)
-    ☐ add some kind of message after completing
+    ✔ dropped lines fade instead of vanishing @done(21-12-22 10:42)
+    ✔ add animation to title @done(21-12-22 09:48)
     ✔ fix font @done(21-12-21 10:58)
-
-    SPRITES
-    ☐ void (dark, purple?)
-    ☐ restore (shine?)
-    ☐ more stuff on end screen before credits
-
+    ✔ add some kind of message after completing @done(21-12-22 17:16)
+        
     BUGS
     ✔ Fix sound effects; button down/up @done(21-12-21 14:37)
+    ☐ Music fading/starting/stopping is buggy
     ☐ sometimes placed lines don't split the bottom area.
-    ☐ polygon split seems to create bugs when a line is placed fully within existing polygons.
-        In this case we don't need to split anything so lines placed like this should be ignored.
+    ☐ polygon split creates weird lines and extra shapes where it shouldn't
+    
+    GAMEPLAY
+    ☐ Change the way wrong picks drop things
+    ☐ Make sure there is only one visible color choice for placing a line
 
-STUFF TO MAKE
+    STUFF TO MAKE
     ✔ pressed buttons @done(21-01-31 07:37)
     ✔ text box @done(21-01-30 23:48)
+    
+    STRETCH
+    ☐ have display slide up and down instead of appearing suddenly
+    ☐ Add sound effects; clicked wrong, clicked right

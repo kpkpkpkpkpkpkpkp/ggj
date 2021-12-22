@@ -26,4 +26,12 @@ Compress-Archive -Force @compress
 Move-Item -Force .\ggj.zip .\game\ggj.love
 cmd /c copy /b .\game\love.exe+.\game\ggj.love .\game\ggj.exe
 Remove-Item .\game\ggj.love
+Remove-Item .\game\love.exe
+Remove-Item .\game\lovec.exe
+Remove-Item .\game\love.ico
+Remove-Item .\game\game.ico
+Remove-Item .\game\main.lua
+Remove-Item -Path '.\game\src' -Recurse -Force
+Remove-Item -Path '.\game\assets' -Recurse -Force
+Remove-Item -Path '.\game\lib' -Recurse -Force
 

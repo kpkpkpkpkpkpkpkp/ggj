@@ -2,6 +2,7 @@ items = {}
 matrix = nil
 local vector = require 'lib.vector'
 
+itemdroptime = 8
 function items.load()
     local i = love.graphics.newImage('assets/sprites/Items-Sheet.png')
     matrix = items.animation(i, 0.3)
@@ -279,8 +280,7 @@ Maybe using all the colours,
 and all the knowledge through 
 my research, one day I can 
 bring back some of what has 
-been lost.]]
-},
+been lost.]]}
 }
 matrix.foundloc = {vector(81, -2),
         vector(100, -2),
@@ -318,7 +318,8 @@ matrix.foundloc = {vector(81, -2),
                 target = false,
                 ctarget = false,
                 found = false,
-                focus = false
+                focus = false,
+                itemdropcount = 0
             }
             --cx cy are center point, used to determine which items fall within a shape
             tile.cx = tile.tx + tile.tw / 2
@@ -400,15 +401,22 @@ function items.drop(i)
         ri = matrix.noness[r]
         tile = matrix.tiles[ri]
         if tile then
+            tile.itemdropcount = itemdroptime
             tile.dropped = true
         end
     end
 end
 
-timer = 0
+itemdropcount = 0
+
 function items.update(dt)
+    --itemdropcount is initialized when items.drop is called.
+    
     mx, my = love.mouse.getPosition()
     for i, t in pairs(matrix.tiles) do
+        if t.itemdropcount > 0 then
+            t.itemdropcount = t.itemdropcount - (dt*itemdroptime)
+        end
         if mx > t.tx and mx < t.tx + t.tw and my > t.ty and my < t.ty + t.th then
             t.selected = true
         else
@@ -417,9 +425,9 @@ function items.update(dt)
         t.ct = t.ct + dt
         if t.ct > 2 * t.d then t.ct = 0 end
     end
-    timer = timer + (dt * 10)
-    if timer % 2 == 0 then
-    end
+    -- timer = timer + (dt * 10)
+    -- if timer % 2 == 0 then
+    -- end
 end
 
 function items.draw()
@@ -434,6 +442,13 @@ function items.draw()
             else
                 love.graphics.draw(matrix.sheet, t.f1, t.tx, t.ty)
             end
+        elseif t.dropped and not t.found then
+            local idc = 1-(t.itemdropcount/itemdroptime)
+            r,g,b,a=love.graphics.getColor()
+            love.graphics.setColor(r,g,b,a-idc) --reduce alpha
+            love.graphics.draw(matrix.sheet, t.f1, t.tx, t.ty)
+            love.graphics.setColor(r,g,b,a) --reset opacity
+            
         end
     end
 end
