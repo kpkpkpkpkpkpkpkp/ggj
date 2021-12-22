@@ -2,7 +2,6 @@ Polygon = require 'lib.HC.polygon'
 hcvector = require 'lib.HC.vector-light'
 local vector = require 'lib.vector'
 
-
 function split_poly(shape, x, y, dx, dy)
     poly1 = {}
     poly2 = {}

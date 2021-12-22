@@ -62,3 +62,9 @@ function sounds.playnone()
         playing = 0
     end
 end
+
+function sounds.changeplayingvolume(dt)
+    for i=1, playing do
+        layers[i]:setVolume(dt)
+    end
+end

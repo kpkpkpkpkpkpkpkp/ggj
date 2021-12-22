@@ -34,11 +34,15 @@ ashapes = {}
 
 -- Current vectors tracked by the mouse. Current color of vectors is also included
 cvects = {color = {r = 1, g = 1, b = 1}, colorcenter = {x = 0, y = 0}}
+dropcount = 0
+droptime = 8
+
 res = {x = 256, y = 256}
 ibwidth = 720
 bgwidth = 720
 -- All vectors placed on the screen
 avects = {}
+dvects = {}
 
 --click anywhere to start and switch to play=true and display=true
 -- Coords + image
@@ -209,6 +213,16 @@ function game.update(dt)
             displayct = displayct + dt
         end
     else
+        --dropcount is initialized when game.dropvectors is called.
+        if dropcount > 0 then
+            local voldt = (dropcount/droptime)
+            dropcount = dropcount - (dt*droptime)
+            sounds.changeplayingvolume(voldt)
+        else
+            dvects={}
+        end
+
+
         --scroll the gradient
         bg.x = bg.x - scrollspeed
         if bg.x < -screen:getWidth() then bg.x = 0 end
@@ -269,6 +283,25 @@ function game.draw(debuglines)
                 end
             end
         end
+
+        --this will fade the existing vectors if they are dropped
+        for i, vgrp in pairs(dvects) do
+            --dropcount is decremented in update.
+            --divide to make 0<vdc<1, -1 to invert to use it to slowly decrease alpha channel
+            local vdc = 1-(dropcount/droptime)
+            if vgrp.vs.color then
+                love.graphics.setColor(vgrp.vs['color'].r, 
+                vgrp.vs['color'].g,
+                vgrp.vs['color'].b, 
+                vgrp.vs['color'].a-vdc)
+            end
+            for i, v in pairs(vgrp.vs) do
+                if i ~= 'color' and i ~= 'colorcenter' then
+                    love.graphics.line(vgrp.x, vgrp.y, v.x + vgrp.x, v.y + vgrp.y)
+                end
+            end
+        end
+
         if cvects.color then
             love.graphics.setColor(cvects['color'].r,
                 cvects['color'].g,
@@ -372,7 +405,6 @@ end
 
 function game.reset()
     
-    cvects = {}-- initial shape
     for i, t in pairs(matrix.tiles) do
         t.focus = false
         t.selected = false
@@ -382,15 +414,34 @@ function game.reset()
         button.pressed = false
     end
 
-    sounds.playless()
     love.mouse.setVisible(true)
     locked = false
     colorsset = false
 
-    sounds.playnone()
+    --This will be done by decreasing volume by dropcount in update
+    -- sounds.playnone()
+    game.dropvectors()
+end
+
+function game.dropvectors()
+    --init the counter to start the drop animation (happens in update)
+    dropcount = droptime
+
+    --copy the vectors to an array that is just for animating
+    dvects = avects
+    --get mouse position
+    argx, argy = love.mouse.getPosition()
+    vgrp = {
+        x = argx,
+        y = argy,
+        -- this needs to be deep copy
+        vs = cvects
+    }
+    table.insert(dvects, vgrp)
+    --clear game vectors in-use (so new ones can be created right away without colliding)
+    cvects = {}
     avects = {}
     ashapes = {shape}-- initial shape
-    
 end
 
 function game.colorsmatch(colo1, colo2, tolerance)

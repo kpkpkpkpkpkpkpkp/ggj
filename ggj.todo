@@ -48,15 +48,14 @@ COLORS
     EMBELISH
     ✔ drop button once item has been found, until one button, then increase number of buttons after that. @done(21-01-31 11:18)
     ✔ change gradient BG once a item has been found @done(21-12-16 12:54)
-    ☐ animate drops of buttons/items instead of quick vanish
     ☐ void swallows up tiles and buttons instead of vanishing
-    ☐ dropped lines fade instead of vanishing
+    ✔ dropped lines fade instead of vanishing @done(21-12-22 10:42)
     
     ☐ have display slide up and down instead of appearing suddenly
     ✔ add animation to title @done(21-12-22 09:48)
 
     ☐ Add sound effects; clicked wrong, clicked right
-    ☐ Music fade out and transitions.
+    ✔ Music fade out and transitions. @done(21-12-22 10:42)
     ☐ add some kind of message after completing
     ✔ fix font @done(21-12-21 10:58)
 
