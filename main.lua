@@ -3,17 +3,28 @@ if os.getenv("LOCAL_LUA_DEBUGGER_VSCODE") == "1" then
 end
 love.graphics.setDefaultFilter("nearest", "nearest" )
 require 'src.game'
-scale={x=2.5,y=2.5}
+scale={x=2,y=2}
 local __newImage = love.graphics.newImage -- old function
 local __getPosition = love.mouse.getPosition -- old function
--- DEBUG = false
-DEBUG = true
+DEBUG = false
+-- DEBUG = true
 
 function love.mouse.getPosition() -- new function that sets nearest filter
     local x,y = __getPosition() -- call old function with all arguments to this function
     x=x/scale.x
     y=y/scale.y
     return x,y
+end
+
+function love.keypressed(key, scancode,isrepeat)
+    if key == 'n' and DEBUG then
+        game.reset()
+        game.progress()
+    end
+
+    if key == 'escape' then
+        game.reset()
+    end
 end
 
 function love.graphics.newImage(...) -- new function that sets nearest filter
@@ -24,7 +35,9 @@ end
 
 function love.load()
     debuglines = {}
-    love.window.setMode(res.x*scale.x, res.y*scale.y)
+    love.window.setTitle("Restoration")
+    love.window.setIcon(love.image.newImageData('assets/sprites/frog.png'))
+    love.window.setMode((res.x*scale.x)-(8*scale.x), (res.y*scale.y)-(8*scale.y))
     canvas = love.graphics.newCanvas(res.x, res.y)
     canvas:setFilter("nearest", "nearest")
     game.load()

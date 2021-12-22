@@ -1,9 +1,12 @@
 sounds = {}
 function sounds.load()
-    openingbg = love.audio.newSource('assets/sounds/old/20210127_mysterious_tune.mp3', 'stream')
+    openingbg = love.audio.newSource('assets/sounds/20210127_mysterious_tune.mp3', 'stream')
     openingbg:setLooping(true)
     endingbg = love.audio.newSource('assets/sounds/credits.ogg', 'stream')
     endingbg:setLooping(true)
+    
+    clickd = love.audio.newSource('assets/sounds/sfx_on1.ogg', 'stream')
+    clicku = love.audio.newSource('assets/sounds/sfx_off1.ogg', 'stream')
 
     playing = 0
     layers = {

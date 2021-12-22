@@ -7,6 +7,10 @@ droporder = {'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'}
 restorecounter = 1
 restoreorder = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}
 
+function butt.reset()
+    dropcounter = 0
+    restorecounter = 1
+end
 
 function butt.alldown(bs)
     r = true
@@ -30,9 +34,9 @@ function butt.progress(bs)
     if dropcounter <= 7 then
         butt.drop(bs, droporder[dropcounter])
         dropcounter = dropcounter + 1
-    elseif restorecounter < 7 then
-        butt.restore(bs, restoreorder[restorecounter])
+    elseif restorecounter <= 7 then
         restorecounter = restorecounter + 1
+        butt.restore(bs, restoreorder[restorecounter])
     else
         print('win!')
         return 'win'
@@ -48,8 +52,6 @@ return {
         y = 2,
         sprite = love.graphics.newImage('assets/sprites/ButtonOne.png'),
         spritep = love.graphics.newImage('assets/sprites/ButtonOnePressed.png'),
-        clickd = love.audio.newSource('assets/sounds/sfx_on1.ogg', 'stream'),
-        clicku = love.audio.newSource('assets/sounds/sfx_off1.ogg', 'stream'),
         shine = true,
         pressed = false,
         down = false,
@@ -70,8 +72,6 @@ return {
         y = 2,
         sprite = love.graphics.newImage('assets/sprites/ButtonTwo.png'),
         spritep = love.graphics.newImage('assets/sprites/ButtonTwoPressed.png'),
-        clickd = love.audio.newSource('assets/sounds/sfx_on2.ogg', 'stream'),
-        clicku = love.audio.newSource('assets/sounds/sfx_off2.ogg', 'stream'),
         shine = false,
         pressed = false,
         down = false,
@@ -93,8 +93,6 @@ return {
         y = 60,
         sprite = love.graphics.newImage('assets/sprites/ButtonThree.png'),
         spritep = love.graphics.newImage('assets/sprites/ButtonThreePressed.png'),
-        clickd = love.audio.newSource('assets/sounds/sfx_on3.ogg', 'stream'),
-        clicku = love.audio.newSource('assets/sounds/sfx_off3.ogg', 'stream'),
         shine = false,
         pressed = false,
         down = false,
@@ -116,8 +114,6 @@ return {
         y = 85,
         sprite = love.graphics.newImage('assets/sprites/ButtonFour.png'),
         spritep = love.graphics.newImage('assets/sprites/ButtonFourPressed.png'),
-        clickd = love.audio.newSource('assets/sounds/sfx_on4.ogg', 'stream'),
-        clicku = love.audio.newSource('assets/sounds/sfx_off4.ogg', 'stream'),
         shine = false,
         pressed = false,
         down = false,
@@ -139,8 +135,6 @@ return {
         y = 165,
         sprite = love.graphics.newImage('assets/sprites/ButtonFive.png'),
         spritep = love.graphics.newImage('assets/sprites/ButtonFivePressed.png'),
-        clickd = love.audio.newSource('assets/sounds/sfx_on5.ogg', 'stream'),
-        clicku = love.audio.newSource('assets/sounds/sfx_off5.ogg', 'stream'),
         shine = false,
         pressed = false,
         down = false,
@@ -162,8 +156,6 @@ return {
         y = 190,
         sprite = love.graphics.newImage('assets/sprites/ButtonSix.png'),
         spritep = love.graphics.newImage('assets/sprites/ButtonSixPressed.png'),
-        clickd = love.audio.newSource('assets/sounds/sfx_on6.ogg', 'stream'),
-        clicku = love.audio.newSource('assets/sounds/sfx_off6.ogg', 'stream'),
         shine = false,
         pressed = false,
         down = false,
@@ -185,8 +177,6 @@ return {
         y = 228,
         sprite = love.graphics.newImage('assets/sprites/ButtonSeven.png'),
         spritep = love.graphics.newImage('assets/sprites/ButtonSevenPressed.png'),
-        clickd = love.audio.newSource('assets/sounds/sfx_on7.ogg', 'stream'),
-        clicku = love.audio.newSource('assets/sounds/sfx_off7.ogg', 'stream'),
         shine = false,
         pressed = false,
         down = false,
@@ -208,8 +198,6 @@ return {
         y = 228,
         sprite = love.graphics.newImage('assets/sprites/ButtonEight.png'),
         spritep = love.graphics.newImage('assets/sprites/ButtonEightPressed.png'),
-        clickd = love.audio.newSource('assets/sounds/sfx_on8.ogg', 'stream'),
-        clicku = love.audio.newSource('assets/sounds/sfx_off8.ogg', 'stream'),
         shine = false,
         pressed = false,
         down = false,

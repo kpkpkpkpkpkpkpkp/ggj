@@ -3,7 +3,7 @@ matrix = nil
 local vector = require 'lib.vector'
 
 function items.load()
-    local i = love.graphics.newImage('assets/Items-Sheet.png')
+    local i = love.graphics.newImage('assets/sprites/Items-Sheet.png')
     matrix = items.animation(i, 0.3)
 
 --set up 15 as targets
@@ -19,227 +19,270 @@ function items.animation(image, duration)
     matrix.targettext =
         {
             {colo = [[Entry 255:
-At least colour hasn't been lost. 
-Maybe some brighter shades are 
-fading, but I clearly remember 
-a rich purple. Maybe if I can 
-tune the frequency lasers to it...
+
+
+At least colour hasn't been 
+lost. Maybe some brighter 
+shades are fading, but I 
+clearly remember a rich 
+purple. Maybe if I can tune 
+the frequency lasers to it...
 ]],
-item = [[...then I might also remember 
-more clearly a description I 
-heard long ago. A smooth 
-shining purple, not 
-manufactured but still 
+item = [[...then I might be able to 
+remember an boject I knew long 
+ago. A smooth shining purple, 
+not manufactured but still 
 impervious and solid.]]
 },
 {colo = [[Entry 270:
+
+
 While tuning several days ago, 
 I found a deep colour, 
 reminiscent of purple, but 
 still unique. Not a light 
 faded blue, but...
 ]], 
-item = [[...dark blue, like 
-I heard stories about. A substance 
-so vast and transient that still 
+item = [[...dark blue, like I heard 
+stories about. A substance so 
+vast and transient that still 
 held life deep inside.]]
 },
 {colo = [[Entry 275:
+
+
 I had been searching for more 
 ancient tales about oceans 
 and seas, and discovered some 
-small snippet about a mirroring 
-colour, reflecting off surfaces 
-of the seas...
+small snippet about a 
+mirroring colour, reflecting 
+off surfaces of the seas...
 ]]
-, item = [[...and that despite it 
-being made of practically nothing, it 
-also housed sentient life, like the 
-oceans.]]
+, item = [[...and that despite it being 
+made of practically nothing, 
+there were also things living 
+there like the oceans.]]
 
 
 },
 {colo = [[Entry 276:
+
+
 One of my trinkets disappeared 
 yesterday. It was thought for 
 a long time that manufactured 
-substances didn't disappeared but I’ve seen 
-otherwise. It was my favorite colour, 
-a gentle mix of yellow and blue...
+substances hadn't vanished 
+but I’ve seen otherwise. It 
+was my favorite colour, a 
+gentle mix of yellow and blue...
 ]]
-, item = [[...and apparently there was organic 
-matter of the same colour
-carpeting the ground. It was 
-alive, and even housed and fed 
+, item = [[...and apparently 
+there was organic matter of 
+the same colour carpeting the 
+ground. It was alive, and 
+even housed and fed 
 creatures in their own 
 micro-environment.]]
  
- 
 },
 {colo = [[Entry 300:
-After some research into the very 
-beginnings of the age of 
-disappearance, I found a 
+
+
+After some research into the 
+very beginnings of the age 
+of disappearance, I found a 
 reference to an organic 
 material, like ruby...]]
 
-
 ,
 item = [[...But not hard 
-nor tough. But still shiny 
-like little gems.]]
+nor tough. But still as 
+shiny as little gems.]]
 },
 {colo = [[Entry 307:
-Despite feeling thwarted nearly 
-every day by disappearances, 
-I’m pushing forward with my 
-research. Searching through the 
-dark annals with my bright light...
+
+
+Despite feeling thwarted 
+nearly every day by 
+disappearances, I’m pushing 
+forward with my research. 
+Searching through the dark 
+annals with my bright light...
 ]]
-, item = [[...I became curious about what a 
-non-manufactured laser might have 
-been like. Still in the process 
-of searching one out.]]
+, item = [[...I became curious about 
+what a non-manufactured laser 
+might have been like. Still 
+in the process of searching 
+one out.]]
 
 },
 {colo = [[Entry 320:
-Maybe my memories of colours are also 
-disappearing. I must still review them 
-every day to fight against it. 
+
+
+Maybe my memories of colours 
+are also disappearing. I must 
+still review them every day 
+to fight against it. 
 Something like my laser light, 
-similar to its yellow but warmer...
+similar to its yellow 
+but warmer...
 ]]
-, item = [[...and more comfortable feeling. 
-Orange, that’s right!]]
+, item = [[...and more comfortable 
+feeling. Orange, that’s right!]]
 },
 {colo = [[Entry 334:
-It feels like my research is at its most 
-difficult but I now feel more resolve 
-than ever. I’ve been searching through 
-databases and odds and ends 
-until my fingers are pink...
+
+
+It feels like my research is 
+at its most difficult but I 
+now feel more resolve than 
+ever. I’ve been searching 
+through databases and odds 
+and ends until my fingers are 
+pink...
 ]]
-, item = [[...and I’m starting 
-to think I may have exhausted 
-all the documented resources 
-available. Maybe it’s time 
-I step outside on my own and 
-see what could be left and start 
-my own documentation. Even though 
-it’s still night time, there’s no 
-time to lose.]]
+, item = [[...and I’m starting to think 
+I may have exhausted all the 
+documented resources 
+available. Maybe it’s time I 
+step outside on my own and 
+see what could be left and 
+start my own documentation. 
+Even though it’s still night 
+time, there’s no time to lose.]]
 
 },
 {colo = [[Entry 336:
-Looking up into the night sky was a 
-whole new experience. I’ve started 
-setting myself reminders again 
-for colour memories, so I don’t forget, 
+
+
+Looking up into the night sky 
+was a whole new experience. 
+I’ve started setting myself 
+reminders again for colour 
+memories, so I don’t forget, 
 starting with red...
 ]]
 
-, item = [[...and traveling down 
-through the spectrum until I can 
-reach purple. I have to keep hold 
-of memories even as search out 
-new ones. If I manage to venture 
-out during the day hours, I’ll 
-turn my gaze down. There 
-my not be organic material left, 
-but maybe there’s still 
-something natural, laying still 
-on the compacted ground.]]
+, item = [[...and traveling down through 
+the spectrum until I reach 
+purple. I have to keep hold 
+of memories even as search 
+out new ones. If I manage to 
+venture out during the day 
+hours, I’ll turn my gaze 
+down. There my not be organic 
+material left, but maybe 
+there’s still something 
+natural, laying still on the 
+compacted ground.]]
             
             
             
             
             
             
-            },
-            {colo = [[Entry 340:
-Today I’ll remember the colour just 
-after red, the lower frequency; 
-I always have trouble for some 
-reason...
+},
+{colo = [[Entry 340:
+
+
+Today I’ll remember the 
+colour just after red, the 
+lower frequency; I always 
+have trouble for 
+some reason...
 ]]
                 
                 
                 
-                , item = [[...with orange, I don’t 
-know why. I wonder if there could 
-be other edible fruits and what 
-they would be to eat.]]
+, item = [[...with orange, I don’t know 
+why. I wonder if there could 
+be other edible fruits and 
+what they would be to eat.]]
             
             
-            },
-            {colo = [[Entry 341:
+},
+{colo = [[Entry 341:
+
+
 After orange, I’ll tune to 
 just a little lighter...
 ]]
                 
-                , item = [[...and get ready for more 
-first-hand research. I’ll search 
-through the sky at day soon, and 
-look for something I saw referenced 
-once, that would float through it. 
+, item = [[...and get ready for more 
+first-hand research. I’ll 
+search through the sky at day 
+soon, and look for something 
+I saw referenced once, that 
+would float through it. 
 Maybe there’s some left.]]
             
             
             
-            },
-            {colo = [[Entry 345:
+},
+{colo = [[Entry 345:
+
+
 Back to my favorite colour! 
 I could never forget...
 ]]
                 
-, item = [[...especially now after all my 
-research into green organic materials. 
-Not only passive organics, but even 
-sentient organics of the same colour.]]
-            
-            
-            },
-            {colo = [[Entry 349:
-I started going back over my old notes, 
-some of the first ones about the oceans. 
-They must have had such a colour...
+, item = [[...especially now after all 
+my research into green 
+organic materials. Not only 
+passive organics, but even 
+sentient organics of the same 
+colour.]]
+
+},
+{colo = [[Entry 349:
+
+
+I started going back over my 
+old notes, some of the first 
+ones about the oceans. They 
+must have had such a colour...
 ]]
-, item = [[...and housed so many creatures. 
-I can picture some of the creatures now, 
-even the ones that were living but 
+, item = [[...and housed so many 
+creatures. I can picture some 
+of the creatures now, even 
+the ones that were living but 
 stationary.]]
             
-            },
-            {colo = [[Entry 352:
-I’ve learned about so many types of 
-organics, and now I’ve found a whole 
-database on flowers. There’s a new 
+},
+{colo = [[Entry 352:
+
+
+I’ve learned about so many 
+types of organics, and now 
+I’ve found a whole database 
+on flowers. There’s a new 
 one, the violet...
+]]                                
+,item = [[...along with so many others,
+even some that are affiliated 
+with water.]]
+},
+{colo = [[Entry 365:
+
+
+Even though it’s not truly on 
+the colour spectrum, pink has 
+its place in nature...
 ]]
                 
-                
-                
-                
-                , item = [[...along with so many others,
-even some that are affiliated with water.]]
-            },
-            {colo = [[Entry 365:
-Even though it’s not truly on the colour 
-spectrum, pink has it’s place in nature...
-]]
-                
-                
-                , item = [[...in flowers, fruits, insects, 
-and so many things I’ve discovered. 
-All the colours I know were 
-once reflected in the natural world. 
-Maybe using all the colours, and all the 
-knowledge through my research, one 
-day I can bring back some of what 
-has been lost.]]
+, item = [[...in flowers, fruits, 
+insects, and so many things 
+I’ve discovered. All the 
+colours I know were once 
+found in the natural world. 
+Maybe using all the colours, 
+and all the knowledge through 
+my research, one day I can 
+bring back some of what has 
+been lost.]]
 },
 }
-    matrix.foundloc = {vector(81, -2),
+matrix.foundloc = {vector(81, -2),
         vector(100, -2),
         vector(124, -2),
         vector(148, -2),
@@ -321,6 +364,19 @@ function items.find(i)
     end
 end
 
+function items.reset()
+    matrix.next=1
+    for i, t in pairs(matrix.tiles) do
+        t.ct = 0
+        t.selected = false
+        t.dropped = false
+        t.target = false
+        t.ctarget = false
+        t.found = false
+        t.focus = false
+    end
+end
+
 function items.next()
     if matrix.next < 15 then
         matrix.next = matrix.next + 1
@@ -335,9 +391,11 @@ end
 
 function items.drop(i)
     tile = matrix.tiles[i]
+    --if there is a specified tile, simply drop it
     if i then
         tile.dropped = true
     else
+        --if no tile is specified, drop a random tile that isn't one of the correct choices
         r = math.random(1, #matrix.noness)
         ri = matrix.noness[r]
         tile = matrix.tiles[ri]
@@ -361,8 +419,7 @@ function items.update(dt)
     end
     timer = timer + (dt * 10)
     if timer % 2 == 0 then
-        end
-
+    end
 end
 
 function items.draw()

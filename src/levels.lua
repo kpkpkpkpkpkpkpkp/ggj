@@ -6,12 +6,13 @@ Orientation={
     DIAG_DEC=4
 }
 
-
 function level.progress(lv) 
-    if lv.counter > 15 then
-        lv.counter=0
-    end
+    if lv.counter > 15 then level.reset(lv) end
     lv.counter = lv.counter+1
+end
+
+function level.reset(lv)
+    lv.counter = 1
 end
 
 function level.getcenter(lv,buttonlabel)
@@ -28,14 +29,17 @@ function level.getor(lv,buttonlabel)
 end
 
 function level.getcolor(lv)
+    if lv.counter > 15 then level.reset(lv) end
     return lv[lv.counter].color
 end
 
 function level.screen(lv)
+    if lv.counter > 15 then level.reset(lv) end
     return lv.screens[lv.counter]
 end
 
 function level.inbetween(lv)
+    if lv.counter > 15 then level.reset(lv) end
     return lv.inbetweens[lv.counter]
 end
 
@@ -46,7 +50,7 @@ return {
     --play area is 200x200
     --coordinates are in rows and columns, there are 8 of each
 
-    counter = 0,
+    counter = 1,
     --mapping each vector's color center
     --numbers represent rows and columns, gaps between items
     --scale is to convert r/c into actual coordinates
@@ -75,8 +79,8 @@ return {
 
     {
         --purple
-        color = {r = 0.87,
-        g = 0.60,
+        color = {r = 0.55,
+        g = 0.10,
         b = 1,
         a = 1,
         fixed = 'g',
@@ -101,9 +105,9 @@ return {
         cx=b,
         cy=g},
         a={r=7,c=2,orien=Orientation.VERTICAL}, --vert, col is irrelevant  
-        b={r=6,c=4,orien=Orientation.VERTICAL}, --vert, col is irrelevant
-        c={r=1,c=1,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
-        d={r=1,c=3,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
+        b={r=6,c=8,orien=Orientation.VERTICAL}, --vert, col is irrelevant
+        c={r=2,c=1,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
+        d={r=4,c=1,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
         e={r=2,c=5.5,orien=Orientation.DIAG_ASC}, --diag +30deg
         f={r=5.5,c=5,orien=Orientation.DIAG_ASC}, --diag +30deg
         g={r=1,c=7.5,orien=Orientation.DIAG_DEC}  --diag -30deg
@@ -224,7 +228,7 @@ return {
     
         cx=g,
         cy=r},
-        a={r=0,c=0,orien=Orientation.VERTICAL}, --vert, col is irrelevant 
+        a={r=0,c=8,orien=Orientation.VERTICAL}, --vert, col is irrelevant 
         b={r=0,c=4,orien=Orientation.VERTICAL}, --vert, col is irrelevant
         c={r=5,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
         d={r=8,c=0,orien=Orientation.HORIZONTAL}, --horiz, row is irrelevant
@@ -297,36 +301,36 @@ return {
     },
 
     screens = {
-        love.graphics.newImage('assets/Backgrounds/GradientOne.png'),
-        love.graphics.newImage('assets/Backgrounds/GradientTwo.png'),
-        love.graphics.newImage('assets/Backgrounds/GradientThree.png'),
-        love.graphics.newImage('assets/Backgrounds/GradientFour.png'),
-        love.graphics.newImage('assets/Backgrounds/GradientFive.png'),
-        love.graphics.newImage('assets/Backgrounds/GradientSix.png'),
-        love.graphics.newImage('assets/Backgrounds/GradientSeven.png'),
-        love.graphics.newImage('assets/Backgrounds/GradientEight.png'),
-        love.graphics.newImage('assets/Backgrounds/GradientNine.png'),
-        love.graphics.newImage('assets/Backgrounds/GradientTen.png'),
-        love.graphics.newImage('assets/Backgrounds/GradientEleven.png'),
-        love.graphics.newImage('assets/Backgrounds/GradientTwelve.png'),
-        love.graphics.newImage('assets/Backgrounds/GradientThirteen.png'),
-        love.graphics.newImage('assets/Backgrounds/GradientFourteen.png'),
-        love.graphics.newImage('assets/Backgrounds/GradientFifteen.png')
+        love.graphics.newImage('assets/sprites/backgrounds/GradientOne.png'),
+        love.graphics.newImage('assets/sprites/backgrounds/GradientTwo.png'),
+        love.graphics.newImage('assets/sprites/backgrounds/GradientThree.png'),
+        love.graphics.newImage('assets/sprites/backgrounds/GradientFour.png'),
+        love.graphics.newImage('assets/sprites/backgrounds/GradientFive.png'),
+        love.graphics.newImage('assets/sprites/backgrounds/GradientSix.png'),
+        love.graphics.newImage('assets/sprites/backgrounds/GradientSeven.png'),
+        love.graphics.newImage('assets/sprites/backgrounds/GradientEight.png'),
+        love.graphics.newImage('assets/sprites/backgrounds/GradientNine.png'),
+        love.graphics.newImage('assets/sprites/backgrounds/GradientTen.png'),
+        love.graphics.newImage('assets/sprites/backgrounds/GradientEleven.png'),
+        love.graphics.newImage('assets/sprites/backgrounds/GradientTwelve.png'),
+        love.graphics.newImage('assets/sprites/backgrounds/GradientThirteen.png'),
+        love.graphics.newImage('assets/sprites/backgrounds/GradientFourteen.png'),
+        love.graphics.newImage('assets/sprites/backgrounds/GradientFifteen.png')
     },
     inbetweens = {
-        love.graphics.newImage('assets/Backgrounds/InbetweenOne.png'),
-        love.graphics.newImage('assets/Backgrounds/InbetweenTwo.png'),
-        love.graphics.newImage('assets/Backgrounds/InbetweenThree.png'),
-        love.graphics.newImage('assets/Backgrounds/InbetweenFour.png'),
-        love.graphics.newImage('assets/Backgrounds/InbetweenFive.png'),
-        love.graphics.newImage('assets/Backgrounds/InbetweenSix.png'),
-        love.graphics.newImage('assets/Backgrounds/InbetweenSeven.png'),
-        love.graphics.newImage('assets/Backgrounds/InbetweenEight.png'),
-        love.graphics.newImage('assets/Backgrounds/InbetweenNine.png'),
-        love.graphics.newImage('assets/Backgrounds/InbetweenTen.png'),
-        love.graphics.newImage('assets/Backgrounds/InbetweenEleven.png'),
-        love.graphics.newImage('assets/Backgrounds/InbetweenTwelve.png'),
-        love.graphics.newImage('assets/Backgrounds/InbetweenThirteen.png'),
-        love.graphics.newImage('assets/Backgrounds/InbetweenFourteen.png')
+        love.graphics.newImage('assets/sprites/backgrounds/InbetweenOne.png'),
+        love.graphics.newImage('assets/sprites/backgrounds/InbetweenTwo.png'),
+        love.graphics.newImage('assets/sprites/backgrounds/InbetweenThree.png'),
+        love.graphics.newImage('assets/sprites/backgrounds/InbetweenFour.png'),
+        love.graphics.newImage('assets/sprites/backgrounds/InbetweenFive.png'),
+        love.graphics.newImage('assets/sprites/backgrounds/InbetweenSix.png'),
+        love.graphics.newImage('assets/sprites/backgrounds/InbetweenSeven.png'),
+        love.graphics.newImage('assets/sprites/backgrounds/InbetweenEight.png'),
+        love.graphics.newImage('assets/sprites/backgrounds/InbetweenNine.png'),
+        love.graphics.newImage('assets/sprites/backgrounds/InbetweenTen.png'),
+        love.graphics.newImage('assets/sprites/backgrounds/InbetweenEleven.png'),
+        love.graphics.newImage('assets/sprites/backgrounds/InbetweenTwelve.png'),
+        love.graphics.newImage('assets/sprites/backgrounds/InbetweenThirteen.png'),
+        love.graphics.newImage('assets/sprites/backgrounds/InbetweenFourteen.png')
     }
 }

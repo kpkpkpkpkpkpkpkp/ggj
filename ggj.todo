@@ -7,23 +7,15 @@ COLORS
     ✔ For some arbitrary point on each line in the 'victory' condition, Set that line's button's 'color center' as that point's X,Y coordinates @done(21-09-02 18:32)
     ✔ Set one color as the target color for each 'level' @done(21-09-02 18:32)
     ✔ Figure out a formula for varying the color so that the line will always gradiate towards the target color when the mouse is closer to that line's color center point. @done(21-12-16 12:48)
-    ☐ Tweak rate of color change so it is more obvious when the color matches
-    ☐ Only modifies the color on the axis perpandicualr to the current vector
+    ✔ Only modifies the color on the axis perpandicualr to the current vector @done(21-12-17 02:06)
+    ✔ Change color gradiation to full spectrum (need to think about this) @done(21-12-18 09:49)
+    ✔ Tweak rate of color change so it is more obvious when the color matches @done(21-12-18 09:49)
 
     TILES
     ✔ -split the item spritesheet into individual quads @done(21-01-30 23:44)
     ✔ -create objects for each item @done(21-01-31 07:33)
     ✔ list of target items @done(21-01-31 09:05)
     ✔ current target item @done(21-01-31 09:05)
-    
-    REFACTOR
-    ☐ create 'placeline' method
-    ☐ create 'newlevel' method
-    ☐ create 'runchecks' method
-    ☐ create 'shapechecks' method
-    ☐ create 'line' module, 'init, update, draw'
-    ☐ refactor button module, create an 'init, update, draw' etc
-    ☐ make display stuff into buttons?
 
     STATE CHECKS
     For each stage, there is one item that needs to be "found".
@@ -45,7 +37,6 @@ COLORS
     
     SOUND
     ✔ Apply sounds as the player clicks buttons. The sounds happen in a perscribed order regardless of which buttton is clicked. @done(21-01-30 12:28)
-    ☐ Add sound effects; clicked wrong, clicked right
     
     STORY
     ✔ -display screen @done(21-01-30 23:45)
@@ -53,23 +44,32 @@ COLORS
     ✔ -associate text with items. Two texts per item @done(21-01-31 17:23)
     ✔ -Show first text on level beginning to help with color, and second text once lines are all placed to help pick item @done(21-01-31 17:23)
     ✔ -text is retained and can be viewed on the display. @done(21-01-31 17:24)
-    
+
     EMBELISH
-    ☐ fix font (make it use nearest neighbor)
     ✔ drop button once item has been found, until one button, then increase number of buttons after that. @done(21-01-31 11:18)
     ✔ change gradient BG once a item has been found @done(21-12-16 12:54)
     ☐ animate drops of buttons/items instead of quick vanish
     ☐ void swallows up tiles and buttons instead of vanishing
-    ☐ animate display up/down
-    ☐ Music fade out and transitions.
     ☐ dropped lines fade instead of vanishing
     
+    ☐ have display slide up and down instead of appearing suddenly
+    ✔ add animation to title @done(21-12-22 09:48)
+
+    ☐ Add sound effects; clicked wrong, clicked right
+    ☐ Music fade out and transitions.
+    ☐ add some kind of message after completing
+    ✔ fix font @done(21-12-21 10:58)
+
+    SPRITES
+    ☐ void (dark, purple?)
+    ☐ restore (shine?)
+    ☐ more stuff on end screen before credits
+
     BUGS
-    ☐ retain minimum shapes in ashapes
-    ☐ Fix sound effects; button down/up
+    ✔ Fix sound effects; button down/up @done(21-12-21 14:37)
+    ☐ sometimes placed lines don't split the bottom area.
     ☐ polygon split seems to create bugs when a line is placed fully within existing polygons.
-    In this case we don't need to split anything so lines placed like this should be ignored.
-    ☐ sometimes placed lines don't split polygons if they're very close to an item. Maybe this is okay?
+        In this case we don't need to split anything so lines placed like this should be ignored.
 
 STUFF TO MAKE
     ✔ pressed buttons @done(21-01-31 07:37)
