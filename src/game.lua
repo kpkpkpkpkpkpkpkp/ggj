@@ -141,7 +141,6 @@ function game.progress()
     --TODO don't like this
     win = butt.progress(buttons)
     if win then
-        sounds.playnone()
         mode.win = true
     else
         screen = level.screen(levels)
@@ -150,9 +149,8 @@ function game.progress()
         --inbetweens after we switch to a new level
         currentbg = screen
         targetcolor = level.getcolor(levels)
+        sounds.playnone()
     end
-
-
 end
 
 function game.titleanim()
@@ -181,11 +179,13 @@ function game.credits()
     credscrollspeed = 30
 end
 
+--inserts intersections into points array and returns true or false
 function game.addintersects(points, shape, x, y, dx, dy)
     ray_parameters = shape:intersectionsWithRay(x, y, dx, dy)
     v1 = vector(x, y)
     v2 = vector(dx, dy)
     for i, rp in pairs(ray_parameters) do
+        --getting the xy values of intersect points out of the ray parameter object so they can be used later
         iv = v1 + (v2 * rp)
         ix, iy = iv:unpack()
         table.insert(points, {p1 = ix, p2 = iy})
@@ -418,6 +418,7 @@ function game.draw(debuglines)
         tc.g, 
         tc.b,
         tc.a)
+        love.graphics.line(0,0,mx, my)
         love.graphics.rectangle('fill', 2, 2, 8, 8)
         debuglines[6] = ' target for square r=' .. tc.r .. ' g=' .. tc.g .. ' b=' .. tc.b
         
@@ -480,31 +481,6 @@ function game.dropvectors()
     cvects = {}
     avects = {}
     ashapes = {shape}-- initial shape
-end
-
-function game.colorsmatch(colo1, colo2, tolerance)
-    if DEBUG then return true end
-    r1 = colo1.r * 255
-    g1 = colo1.g * 255
-    b1 = colo1.b * 255
-    
-    r2 = colo2.r * 255
-    g2 = colo2.g * 255
-    b2 = colo2.b * 255
-    
-    rboundlow, rboundhigh = r1 - tolerance, r1 + tolerance
-    gboundlow, gboundhigh = g1 - tolerance, g1 + tolerance
-    bboundlow, bboundhigh = b1 - tolerance, b1 + tolerance
-    if rboundhigh < r2 or rboundlow > r2 then
-        return false
-    end
-    if gboundhigh < g2 or gboundlow > g2 then
-        return false
-    end
-    if bboundhigh < b2 or bboundlow > b2 then
-        return false
-    end
-    return true
 end
 
 function game.startgame()
@@ -578,8 +554,9 @@ function game.updatecolor(mx,my)
         grad=0
         w=200
         h=200
-        cx=(cc.x)-mx
-        cy=(cc.y)-my
+        roc=1
+        cx=(cc.x)-(mx*roc)
+        cy=(cc.y)-(my*roc)
 
         if orientation == Orientation.VERTICAL then
             -- grad = cx/w
@@ -598,6 +575,8 @@ function game.updatecolor(mx,my)
         --this makes gradient a percentage of the play area and then converts it to a 255 bounded value
         grad = (grad/200) * 255 *3
         --this will loop color rather than overflowing the rgb value
+        --NOTE this causes duplicate colors, maybe should start increasing the lowest value
+        --Before getting absolute, we want to handle cases where the gradient loops back around 
         grad = math.abs(grad) 
         
         debuglines[7] = 'gradient val '.. grad
@@ -781,63 +760,105 @@ function game.placevectors(argx, argy)
         ps = {}
         rm = {}
         for i, shape in pairs(ashapes) do
-            --NEXT do this for each line in avects
-            --vgrp is a group of two vectors "radiating" from a point. Each of the two vectors might
-            --intersect with the current shape either zero, one, or two times, but only two times combined between the two vecotrs.
-            --compose a line using two of the intersect points, and pass that line into the split function
-            pts = {}
-            for k, v in pairs(vgrp.vs) do
-                if k ~= 'color' and k ~= 'colorcenters' then
-                    intr = game.addintersects(pts, shape, vgrp.x, vgrp.y, v.x, v.y)
+            --NOTE
+            --I think this only needs to be done for the shape that contains the target item? 
+            if game.containstarget(shape) then
+                --NEXT do this for each line in avects
+
+                --vgrp is a group of two vectors "radiating" from a point (mouse position). Each of the two vectors might
+                --intersect with the current shape either zero, one, or two times, but only two times combined between the two vecotrs.
+                --compose a line using both of the intersect points, and pass that line into the split function
+
+                --init the array for intersect points
+                pts = {}
+                --for each current vector (there should be two) find its intersects with the current shape
+                for k, v in pairs(vgrp.vs) do
+                    if k ~= 'color' and k ~= 'colorcenters' then
+                        intr = game.addintersects(pts, shape, vgrp.x, vgrp.y, v.x, v.y)
+                    end
                 end
-            end
-            
-            if intr and #pts >= 2 then
-                p = pts[1]
-                q = pts[2]
-                poly1, poly2 = split_poly(shape, p.p1, p.p2, q.p1 - p.p1, q.p2 - p.p2)
-                table.insert(ps, poly1)
-                table.insert(ps, poly2)
+
+                --If there are intersects, and there are EXACTLY 2, we can use them to split the current shape between them.
+                if intr and #pts >= 2 then
+                    p = pts[1]
+                    q = pts[2]
+                    poly1, poly2 = split_poly(shape, p.p1, p.p2, q.p1 - p.p1, q.p2 - p.p2)
+                    table.insert(ps, poly1)
+                    table.insert(ps, poly2)
+                else
+                    --no intersects and didn't split, so keep this shape as-is
+                    table.insert(ps, shape)
+                end
             else
-                --didn't split, keep this shape
                 table.insert(ps, shape)
             end
         end
-        
         ashapes = {}
         for _, poly in pairs(ps) do
             table.insert(ashapes, poly)
+            if game.containstarget(poly) then
+            end
         end
         
         --Once we have split all the shapes, check items in them to decide what to highlight
         for i, shape in pairs(ashapes) do
-            foundtarget = false
-            selecteditems = {}
-            for i, t in pairs(matrix.tiles) do
-                if shape:contains(t.cx, t.cy) then
-                    if t.ctarget then
-                        foundtarget = true
-                    end
-                    table.insert(selecteditems, t)
-                end
-            end
-            if not foundtarget then
-                shape.colo = {
-                    250 / 255,
-                    210 / 255,
-                    100 / 255,
-                    0.5
-                
-                }
-                for i, t in pairs(selecteditems) do
-                    t.focus = false
-                end
-            else
+            --This could be replaced 
+            selecteditems = game.containeditems(shape)
+            if game.containstarget(shape) then
+
+                foundtarget = false
                 for i, t in pairs(selecteditems) do
                     t.focus = true
                 end
                 shape.colo[4] = 0
+                
+                -- shape.colo = {
+                --     0,
+                --     210 / 255,
+                --     0,
+                --     0.5
+                -- }
+
+            else
+                shape.colo = {
+                        250 / 255,
+                        210 / 255,
+                        100 / 255,
+                        0.5
+                    }
+                for i, t in pairs(selecteditems) do
+                    t.focus = false
+                end
             end
+        end
+
+    end
+end
+
+function game.containstarget(shape)
+    for i, t in pairs(matrix.tiles) do
+        if shape:contains(t.cx, t.cy) then
+            if t.ctarget then
+                return true
+            end
+        end
+    end
+end
+
+function game.containeditems(shape)
+    local selecteditems = {}
+    for i, t in pairs(matrix.tiles) do
+        if shape:contains(t.cx, t.cy) then
+            table.insert(selecteditems, t)
+        end
+    end
+    return selecteditems
+end
+
+function game.gettargetpoly()
+    for i, shape in pairs(ashapes) do
+        if game.containstarget(shape) then
+            return shape
         end
     end
 end

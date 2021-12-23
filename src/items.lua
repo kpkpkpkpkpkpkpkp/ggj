@@ -16,7 +16,7 @@ function items.animation(image, duration)
     local matrix = {}
     matrix.sheet = image
     matrix.tiles = {}
-    matrix.targets = {19, 24, 28, 53,18, 39, 54, 25, 32, 46, 8, 5, 42, 23, 10}
+    matrix.targets = {19, 24, 28, 53, 18, 39, 54, 25, 32, 46, 8, 5, 42, 23, 10}
     matrix.targettext =
         {
             {colo = [[Entry 255:
@@ -69,13 +69,14 @@ there like the oceans.]]
 {colo = [[Entry 276:
 
 
-One of my trinkets disappeared 
-yesterday. It was thought for 
-a long time that manufactured 
-substances hadn't vanished 
-but I’ve seen otherwise. It 
-was my favorite colour, a 
-gentle mix of yellow and blue...
+One of my trinkets 
+disappeared yesterday. It 
+was thought for a long time 
+that manufactured substances 
+hadn't vanished but I’ve 
+seen otherwise. It was my 
+favorite colour, a gentle 
+mix of yellow and blue...
 ]]
 , item = [[...and apparently 
 there was organic matter of 
@@ -176,11 +177,6 @@ material left, but maybe
 there’s still something 
 natural, laying still on the 
 compacted ground.]]
-            
-            
-            
-            
-            
             
 },
 {colo = [[Entry 340:
@@ -358,7 +354,8 @@ function items.find(i)
         else
             r = math.random(1, #matrix.noness)
             ri = matrix.noness[r]
-            table.remove(matrix.noness, r)
+            -- table.remove(matrix.noness, r)
+            -- items.drop(i)
             items.drop(ri)
             return false
         end

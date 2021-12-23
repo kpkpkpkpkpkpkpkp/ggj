@@ -3,29 +3,36 @@ hcvector = require 'lib.HC.vector-light'
 local vector = require 'lib.vector'
 
 function split_poly(shape, x, y, dx, dy)
+    --takes in 'shape', and an intersecting vector
+
+    --init two new polygons
     poly1 = {}
     poly2 = {}
     
+    --find intersect points
     a, b = getIntersects(shape, x, y, dx, dy)
+    --getting the xy of each intersect point
     a.x, a.y = a:unpack()
     b.x, b.y = b:unpack()
     
+    --go through all the points in the shape and decide which shape they're going into
     for i, v in pairs(shape.vertices) do
         q = shape.vertices[i + 1]
         --check which 'side' of line a,b the point is on, and add it to one of the two shapes
         position = (b.x - a.x) * (v.y - a.y) - (b.y - a.y) * (v.x - a.x)
         if position < 0 then
             table.insert(poly1, v)
-        
         elseif position > 0 then
             table.insert(poly2, v)
         end
     end
+    --adding both intersect points to both shapes
     table.insert(poly1, a)
     table.insert(poly1, b)
     table.insert(poly2, a)
     table.insert(poly2, b)
     
+    --sort each point
     poly1 = appSortPointsClockwise(poly1)
     poly2 = appSortPointsClockwise(poly2)
     
@@ -33,26 +40,34 @@ function split_poly(shape, x, y, dx, dy)
     poly2 = expand(poly2)
     
     p1 = Polygon(unpack(poly1))
-    p2 = Polygon(unpack(poly2))
-    
+    p2 = Polygon(unpack(poly2)) 
+        --polygon.lua 76 [ index 'q' (a nil value) ]
+        --'q' is a point
+
+        -- function returns true if three points make a counter clockwise turn
+        -- Is failing because there isn't at least a second point in the polygon
+        -- maybe too many points getting added to the first?
+        
+
     if p1 then p1.colo = {
-        math.random(170, 200) / 255,
-        math.random(170, 200) / 255,
-        math.random(170, 200) / 255,
-        0.5
+        math.random(100, 170) / 255,
+        math.random(0, 0) / 255,
+        math.random(0, 0) / 255,
+        1
     }
     end
     if p2 then
         p2.colo = {
-            math.random(170, 200) / 255,
-            math.random(170, 200) / 255,
-            math.random(170, 200) / 255,
+            math.random(0, 0) / 255,
+            math.random(0, 0) / 255,
+            math.random(100, 170) / 255,
             0.5
         }
     end
     return p1, p2
 end
 
+--
 function expand(verts)
     r = {}
     for i, v in ipairs(verts) do

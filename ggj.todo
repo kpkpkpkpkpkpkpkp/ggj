@@ -56,13 +56,13 @@ COLORS
         
     BUGS
     ✔ Fix sound effects; button down/up @done(21-12-21 14:37)
-    ☐ Music fading/starting/stopping is buggy
-    ☐ sometimes placed lines don't split the bottom area.
-    ☐ polygon split creates weird lines and extra shapes where it shouldn't
-    
+    ✔ Music fading/starting/stopping is buggy @done(21-12-23 00:31)
+    ✔ polygon split creates weird lines and extra shapes where it shouldn't @done(21-12-23 00:31)
+    ☐ sometimes placed lines don't split the bottom area, (some tiny extra artifacts sometimes)
+
     GAMEPLAY
     ☐ Change the way wrong picks drop things
-    ☐ Make sure there is only one visible color choice for placing a line
+    ✔ Make sure there is only one visible color choice for placing a line @done(21-12-23 00:32)
 
     STUFF TO MAKE
     ✔ pressed buttons @done(21-01-31 07:37)
