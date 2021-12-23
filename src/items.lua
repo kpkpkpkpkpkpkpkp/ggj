@@ -73,7 +73,7 @@ One of my trinkets
 disappeared yesterday. It 
 was thought for a long time 
 that manufactured substances 
-hadn't vanished but I’ve 
+hadn't vanished but I've 
 seen otherwise. It was my 
 favorite colour, a gentle 
 mix of yellow and blue...
@@ -106,7 +106,7 @@ shiny as little gems.]]
 
 Despite feeling thwarted 
 nearly every day by 
-disappearances, I’m pushing 
+disappearances, I'm pushing 
 forward with my research. 
 Searching through the dark 
 annals with my bright light...
@@ -130,7 +130,7 @@ similar to its yellow
 but warmer...
 ]]
 , item = [[...and more comfortable 
-feeling. Orange, that’s right!]]
+feeling. Orange, that's right!]]
 },
 {colo = [[Entry 334:
 
@@ -138,20 +138,20 @@ feeling. Orange, that’s right!]]
 It feels like my research is 
 at its most difficult but I 
 now feel more resolve than 
-ever. I’ve been searching 
+ever. I've been searching 
 through databases and odds 
 and ends until my fingers are 
 pink...
 ]]
-, item = [[...and I’m starting to think 
+, item = [[...and I'm starting to think 
 I may have exhausted all the 
 documented resources 
-available. Maybe it’s time I 
+available. Maybe it's time I 
 step outside on my own and 
 see what could be left and 
 start my own documentation. 
-Even though it’s still night 
-time, there’s no time to lose.]]
+Even though it's still night 
+time, there's no time to lose.]]
 
 },
 {colo = [[Entry 336:
@@ -159,9 +159,9 @@ time, there’s no time to lose.]]
 
 Looking up into the night sky 
 was a whole new experience. 
-I’ve started setting myself 
+I've started setting myself 
 reminders again for colour 
-memories, so I don’t forget, 
+memories, so I don't forget, 
 starting with red...
 ]]
 
@@ -171,10 +171,10 @@ purple. I have to keep hold
 of memories even as I search
 out new ones. If I manage to 
 venture out during the day 
-hours, I’ll turn my gaze 
+hours, I'll turn my gaze 
 down. There may not be organic 
 material left, but maybe 
-there’s still something 
+there's still something 
 natural, laying still on the 
 compacted ground.]]
             
@@ -182,7 +182,7 @@ compacted ground.]]
 {colo = [[Entry 340:
 
 
-Today I’ll remember the 
+Today I'll remember the 
 colour just after red, the 
 lower frequency; I always 
 have trouble for 
@@ -191,7 +191,7 @@ some reason...
                 
                 
                 
-, item = [[...with orange, I don’t know 
+, item = [[...with orange, I don't know 
 why. I wonder if there could 
 be other edible fruits and 
 what they would be like to eat.]]
@@ -201,17 +201,17 @@ what they would be like to eat.]]
 {colo = [[Entry 341:
 
 
-After orange, I’ll tune to 
+After orange, I'll tune to 
 just a little lighter...
 ]]
                 
 , item = [[...and get ready for more 
-first-hand research. I’ll 
+first-hand research. I'll 
 search through the sky at day 
 soon, and look for something 
 I saw referenced once, that 
 would float through it. 
-Maybe there’s some left.]]
+Maybe there's some left.]]
             
             
             
@@ -249,10 +249,10 @@ stationary.]]
 {colo = [[Entry 352:
 
 
-I’ve learned about so many 
+I've learned about so many 
 types of organics, and now 
-I’ve found a whole database 
-on flowers. There’s a new 
+I've found a whole database 
+on flowers. There's a new 
 one, the violet...
 ]]                                
 ,item = [[...along with so many others,
@@ -262,14 +262,14 @@ with water.]]
 {colo = [[Entry 365:
 
 
-Even though it’s not truly on 
+Even though it's not truly on 
 the colour spectrum, pink has 
 its place in nature...
 ]]
                 
 , item = [[...in flowers, fruits, 
 insects, and so many things 
-I’ve discovered. All the 
+I've discovered. All the 
 colours I know were once 
 found in the natural world. 
 Maybe using all the colours, 
@@ -284,15 +284,15 @@ matrix.foundloc = {vector(81, -2),
         vector(148, -2),
         vector(172, -2),
         vector(196, -2),
-        vector(220, -2),
-        vector(220, 28),
-        vector(220, 52),
-        vector(220, 76),
-        vector(220, 100),
-        vector(220, 124),
-        vector(102, 230),
-        vector(126, 230),
-        vector(150, 230)
+        vector(223, -2),
+        vector(223, 28),
+        vector(223, 52),
+        vector(223, 76),
+        vector(223, 100),
+        vector(223, 124),
+        vector(102, 224),
+        vector(126, 224),
+        vector(150, 224)
     }
     matrix.noness = {}
     matrix.next = 1
@@ -431,6 +431,7 @@ function items.draw()
     for i, t in pairs(matrix.tiles) do
         if not t.dropped and not t.found then
             if t.selected then
+                --animate selected tiles
                 if t.ct > t.d then
                     love.graphics.draw(matrix.sheet, t.f1, t.tx, t.ty)
                 else
@@ -440,6 +441,7 @@ function items.draw()
                 love.graphics.draw(matrix.sheet, t.f1, t.tx, t.ty)
             end
         elseif t.dropped and not t.found then
+            --fade tiles that are getting dropped
             local idc = 1-(t.itemdropcount/itemdroptime)
             r,g,b,a=love.graphics.getColor()
             love.graphics.setColor(r,g,b,a-idc) --reduce alpha
