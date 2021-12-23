@@ -34,7 +34,7 @@ COLORS
     ✔ New BG and new color constants are applied to the buttons. @done(21-09-02 18:33)
     ✔ Match on axis rather than on color center @done(21-12-16 13:52)
 
-    
+
     SOUND
     ✔ Apply sounds as the player clicks buttons. The sounds happen in a perscribed order regardless of which buttton is clicked. @done(21-01-30 12:28)
     
@@ -58,7 +58,7 @@ COLORS
     ✔ Fix sound effects; button down/up @done(21-12-21 14:37)
     ✔ Music fading/starting/stopping is buggy @done(21-12-23 00:31)
     ✔ polygon split creates weird lines and extra shapes where it shouldn't @done(21-12-23 00:31)
-    ☐ sometimes placed lines don't split the bottom area, (some tiny extra artifacts sometimes)
+    ✔ sometimes placed lines don't split the bottom area, (some tiny extra artifacts sometimes) @done(21-12-23 14:13)
 
     GAMEPLAY
     ☐ Change the way wrong picks drop things
@@ -68,6 +68,6 @@ COLORS
     ✔ pressed buttons @done(21-01-31 07:37)
     ✔ text box @done(21-01-30 23:48)
     
-    STRETCH
+    STRETCH GOALS
     ☐ have display slide up and down instead of appearing suddenly
     ☐ Add sound effects; clicked wrong, clicked right

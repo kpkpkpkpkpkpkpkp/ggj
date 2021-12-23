@@ -6,8 +6,8 @@ require 'src.game'
 scale={x=2,y=2}
 local __newImage = love.graphics.newImage -- old function
 local __getPosition = love.mouse.getPosition -- old function
--- DEBUG = false
-DEBUG = true
+DEBUG = false
+-- DEBUG = true
 
 function love.mouse.getPosition() -- new function that sets nearest filter
     local x,y = __getPosition() -- call old function with all arguments to this function
@@ -37,6 +37,7 @@ function love.load()
     debuglines = {}
     love.window.setTitle("W.M.N. Machine")
     love.window.setIcon(love.image.newImageData('assets/sprites/frog.png'))
+    if DEBUG then res.y = res.y+64 end
     love.window.setMode((res.x*scale.x)-(8*scale.x), (res.y*scale.y)-(8*scale.y))
     canvas = love.graphics.newCanvas(res.x, res.y)
     canvas:setFilter("nearest", "nearest")

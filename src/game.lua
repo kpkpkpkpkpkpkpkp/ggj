@@ -32,6 +32,9 @@ x, y, dx, dy = 0, 0, 300, 140
 --color centers (track where the mouse was when the line was palced)
 ashapes = {}
 
+--used to record every intersect for debugging purposes
+allpts={}
+
 -- Current vectors tracked by the mouse. Current color of vectors is also included
 cvects = {color = {r = 1, g = 1, b = 1, a = 1}, colorcenter = {x = 0, y = 0}}
 dropcount = 0
@@ -180,18 +183,36 @@ function game.credits()
 end
 
 --inserts intersections into points array and returns true or false
+-- function game.addintersects(points, shape, x, y, dx, dy)
+--     ray_parameters = shape:intersectionsWithRay(x, y, dx, dy)
+--     v1 = vector(x, y)
+--     v2 = vector(dx, dy)
+--     for i, rp in pairs(ray_parameters) do
+--         --getting the xy values of intersect points out of the ray parameter object so they can be used later
+--         iv = v1 + (v2 * rp)
+--         ix, iy = iv:unpack()
+--         table.insert(points, {p1 = ix, p2 = iy})
+--     end
+--     return shape:intersectsRay(x, y, dx, dy)
+-- end
+
+
+--inserts intersections into points array and returns true or false
 function game.addintersects(points, shape, x, y, dx, dy)
-    ray_parameters = shape:intersectionsWithRay(x, y, dx, dy)
+    intr, rp = shape:intersectsRay(x, y, dx, dy)
     v1 = vector(x, y)
     v2 = vector(dx, dy)
-    for i, rp in pairs(ray_parameters) do
-        --getting the xy values of intersect points out of the ray parameter object so they can be used later
-        iv = v1 + (v2 * rp)
-        ix, iy = iv:unpack()
-        table.insert(points, {p1 = ix, p2 = iy})
-    end
-    return shape:intersectsRay(x, y, dx, dy)
+
+    --getting the xy values of intersect points out of the ray parameter object so they can be used later
+    --(x,y) + rp * (dx, dy)
+
+    iv = v1 + rp * v2
+    ix, iy = iv:unpack()
+    table.insert(points, {p1 = ix, p2 = iy})
+
+    return intr, points
 end
+
 
 function game.checkcolor(x,y)
     -- x,y is vector origin (usually mouse position)
@@ -222,6 +243,7 @@ function game.update(dt)
         if #tquads <= tquadcount then titledone = true end
     elseif mode.win then
         game.reset()
+        sounds.playnone()
         love.audio.play(endingbg)
         --credits
         if credy < 0 then
@@ -413,14 +435,17 @@ function game.draw(debuglines)
     end
     
     if DEBUG then
+        love.graphics.setColor(1,1,1,1)
+        for i,pt in pairs(allpts) do 
+            love.graphics.circle('fill', pt.p1, pt.p2, 2)
+        end
         tc=level.getcolor(levels)
         love.graphics.setColor(tc.r, 
         tc.g, 
         tc.b,
         tc.a)
-        love.graphics.line(0,0,mx, my)
+        -- love.graphics.line(0,0,mx, my)
         love.graphics.rectangle('fill', 2, 2, 8, 8)
-        debuglines[6] = ' target for square r=' .. tc.r .. ' g=' .. tc.g .. ' b=' .. tc.b
         
         if cvects.color then
             fixcolor = tc.fixed        
@@ -431,11 +456,9 @@ function game.draw(debuglines)
             cx = math.abs(cc.x - mx)/res.x
             cy = math.abs(cc.y - my)/res.y
             
-            debuglines[5] = 'r=' .. cvects['color'].r .. ' g=' .. cvects['color'].g .. ' b=' .. cvects['color'].b
-            debuglines[4] = 'cc location '..cc.x..', '..cc.y
-            debuglines[3] = 'shift values '..cx..', '..cy
-            debuglines[2] = 'releasecounter ' .. releasecounter
-
+            debuglines[3] = 'current vectors ' .. sets.tostring(cvects)
+            debuglines[2] = 'intersect count ' .. sets.tostring(allpts)
+            
         end
     end
     
@@ -460,6 +483,7 @@ function game.reset()
     --This will be done by decreasing volume by dropcount in update
     -- sounds.playnone()
     game.dropvectors()
+    allpts={}
 end
 
 function game.dropvectors()
@@ -761,11 +785,11 @@ function game.placevectors(argx, argy)
         rm = {}
         for i, shape in pairs(ashapes) do
             --NOTE
-            --I think this only needs to be done for the shape that contains the target item? 
+            --This only really needs to be done for the shape that contains the target item
             if game.containstarget(shape) then
                 --NEXT do this for each line in avects
 
-                --vgrp is a group of two vectors "radiating" from a point (mouse position). Each of the two vectors might
+                --vgrp is a group of vectors (SHOULD ONLY BE TWO) "radiating" from a point (mouse position). Each of the two vectors might
                 --intersect with the current shape either zero, one, or two times, but only two times combined between the two vecotrs.
                 --compose a line using both of the intersect points, and pass that line into the split function
 
@@ -773,12 +797,15 @@ function game.placevectors(argx, argy)
                 pts = {}
                 --for each current vector (there should be two) find its intersects with the current shape
                 for k, v in pairs(vgrp.vs) do
-                    if k ~= 'color' and k ~= 'colorcenters' then
+                    if k ~= 'color' and k ~= 'colorcenter' then
                         intr = game.addintersects(pts, shape, vgrp.x, vgrp.y, v.x, v.y)
                     end
                 end
 
-                --If there are intersects, and there are EXACTLY 2, we can use them to split the current shape between them.
+                for i,pt in pairs(pts) do
+                    table.insert(allpts,pt)
+                end
+                --If there are intersects, and there are 2, we can use them to split the current shape between them.
                 if intr and #pts >= 2 then
                     p = pts[1]
                     q = pts[2]
@@ -786,13 +813,18 @@ function game.placevectors(argx, argy)
                     table.insert(ps, poly1)
                     table.insert(ps, poly2)
                 else
-                    --no intersects and didn't split, so keep this shape as-is
+                    --in this case, we are looking at the current shape but there weren't any intersects with it. Re-add it to the array.
                     table.insert(ps, shape)
                 end
             else
+                --this is a shape that doesn't contain the target item. 
+                --We don't need to be checking for the intersects of this because they aren't relevant, 
+                --but we still need to retain the shape to color it.
                 table.insert(ps, shape)
             end
         end
+
+        --clear out all old ones and only use new list so there are no overlaps.
         ashapes = {}
         for _, poly in pairs(ps) do
             table.insert(ashapes, poly)

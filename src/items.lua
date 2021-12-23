@@ -30,7 +30,7 @@ purple. Maybe if I can tune
 the frequency lasers to it...
 ]],
 item = [[...then I might be able to 
-remember an boject I knew long 
+remember an object I knew long 
 ago. A smooth shining purple, 
 not manufactured but still 
 impervious and solid.]]
@@ -168,11 +168,11 @@ starting with red...
 , item = [[...and traveling down through 
 the spectrum until I reach 
 purple. I have to keep hold 
-of memories even as search 
+of memories even as I search
 out new ones. If I manage to 
 venture out during the day 
 hours, I’ll turn my gaze 
-down. There my not be organic 
+down. There may not be organic 
 material left, but maybe 
 there’s still something 
 natural, laying still on the 
@@ -194,7 +194,7 @@ some reason...
 , item = [[...with orange, I don’t know 
 why. I wonder if there could 
 be other edible fruits and 
-what they would be to eat.]]
+what they would be like to eat.]]
             
             
 },
